@@ -13,7 +13,7 @@ interface Props {
 
 // Divide "R$ 10,49" → ["R$ 10", "49"]
 function splitPrice(formatted: string) {
-  const match = formatted.match(/^(.*[,\.])(\d{2})$/)
+  const match = formatted.match(/^(.*[,\\.])(\d{2})$/)
   if (!match) return { main: formatted, cents: '' }
   return { main: match[1], cents: match[2] }
 }
