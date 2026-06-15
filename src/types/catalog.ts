@@ -10,6 +10,7 @@ export interface Product {
   price: number              // Preço Atacado (principal)
   priceFormatted: string
   discountPercent: number    // % calculado automaticamente
+  caixaMaster: string
   hasImage: boolean
   imageFileId?: string
   imageUrl?: string

@@ -111,6 +111,14 @@ export default function ProductCard({ product, compact = false }: Props) {
               </span>
             )}
           </div>
+
+          {/* Caixa Master */}
+          {product.caixaMaster && (
+            <div className="mt-1 flex items-center gap-0.5 bg-blue-50 rounded px-1.5 py-0.5 w-fit">
+              <span className="text-[7px]">📦</span>
+              <span className="text-[6.5px] font-semibold text-blue-700">Cx. Master {product.caixaMaster} peças</span>
+            </div>
+          )}
         </div>
 
         {showImageManager && (

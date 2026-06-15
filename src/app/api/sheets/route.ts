@@ -39,6 +39,7 @@ export async function GET() {
     const nameIdx      = col(['produto', 'nome', 'descrição', 'descricao', 'name'])
     const typeIdx      = col(['tipo', 'type', 'grupo'])
     const categoryIdx  = col(['categoria', 'category', 'linha'])
+    const caixaIdx     = col(['caixa master', 'caixa'])
     const priceTabIdx  = col(['preço tabela', 'preco tabela', 'tabela', 'price'])
     const priceAtkIdx  = col(['preço atacado', 'preco atacado', 'atacado'])
 
@@ -65,6 +66,7 @@ export async function GET() {
           name: (row[nameIdx] || '').toString().trim(),
           type: (row[typeIdx] || '').toString().trim(),
           category: categoryIdx >= 0 ? (row[categoryIdx] || '').toString().trim() : '',
+          caixaMaster: caixaIdx >= 0 ? (row[caixaIdx] || '').toString().trim() : '',
           priceOriginal: priceTab,
           priceOriginalFormatted: formatCurrency(priceTab),
           price: priceAtk,

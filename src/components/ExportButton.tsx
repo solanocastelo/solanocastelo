@@ -71,6 +71,7 @@ export default function ExportButton() {
                   </div>
                   ${p.reference ? `<div class="code-right"><span class="label">Ref. </span><strong>${p.reference}</strong></div>` : ''}
                 </div>
+                ${p.caixaMaster ? `<div class="caixa-pill"><span>📦</span><span class="caixa-pill-text">Cx. Master ${p.caixaMaster} peças</span></div>` : ''}
               </div>
             </div>`
             })
@@ -154,6 +155,8 @@ body { background:#e8e8e8;font-family:Arial,sans-serif; }
 .footer-item.full { grid-column:span 2; }
 .footer-label { font-size:13px;color:rgba(255,255,255,0.45);text-transform:uppercase;letter-spacing:1.5px; }
 .footer-value { font-size:18px;font-weight:600; }
+.caixa-pill { display:inline-flex;align-items:center;gap:4px;background:#eff6ff;border-radius:6px;padding:3px 8px;margin-top:6px; }
+.caixa-pill-text { font-size:13px;font-weight:600;color:#1d4ed8; }
 </style></head><body>${coverHtml}${pagesHtml}</body></html>`
 
       const response = await fetch('/api/pdf', {
