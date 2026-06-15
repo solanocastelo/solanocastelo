@@ -1,13 +1,15 @@
 export interface Product {
   id: string
   code: string
+  reference: string          // Referência curta (ex: BT04307)
   name: string
   type: string
   category: string
-  price: number
+  priceOriginal: number      // Preço Tabela (riscado)
+  priceOriginalFormatted: string
+  price: number              // Preço Atacado (principal)
   priceFormatted: string
-  margin?: number
-  brand?: string
+  discountPercent: number    // % calculado automaticamente
   hasImage: boolean
   imageFileId?: string
   imageUrl?: string

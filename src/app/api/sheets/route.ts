@@ -3,6 +3,10 @@ import { getSheetsClient } from '@/lib/google'
 import { Product } from '@/types/catalog'
 import { formatCurrency } from '@/lib/catalog-logic'
 
+function parsePrice(val: string): number {
+  return parseFloat((val || '0').toString().replace(/[^\d,.]/g, '').replace(',', '.')) || 0
+}
+
 export async function GET() {
   try {
     const sheets = await getSheetsClient()
@@ -28,50 +32,51 @@ export async function GET() {
       return -1
     }
 
-    const codeIdx = col(['código', 'codigo', 'referência', 'referencia', 'ref', 'sku', 'code'])
-    const nameIdx = col(['nome', 'descrição', 'descricao', 'produto', 'name'])
-    const typeIdx = col(['tipo', 'type', 'grupo', 'group'])
-    const categoryIdx = col(['categoria', 'category', 'linha', 'line'])
-    const priceIdx = col(['preço', 'preco', 'price', 'valor', 'value'])
-    const marginIdx = col(['margem', 'margin', '%'])
-    const brandIdx = col(['marca', 'brand', 'fabricante'])
+    // Mapeamento das colunas do Sheet Casa Freitas:
+    // Código | Referência | Produto | Tipo | Caixa Master | Preço Tabela | Preço Atacado
+    const codeIdx      = col(['código', 'codigo'])
+    const refIdx       = col(['referência', 'referencia', 'ref'])
+    const nameIdx      = col(['produto', 'nome', 'descrição', 'descricao', 'name'])
+    const typeIdx      = col(['tipo', 'type', 'grupo'])
+    const categoryIdx  = col(['categoria', 'category', 'linha'])
+    const priceTabIdx  = col(['preço tabela', 'preco tabela', 'tabela', 'price'])
+    const priceAtkIdx  = col(['preço atacado', 'preco atacado', 'atacado'])
+
+    // fallback: se só tiver um campo de preço
+    const priceIdx = priceAtkIdx >= 0 ? priceAtkIdx : col(['preço', 'preco', 'valor', 'value'])
+    const origIdx  = priceTabIdx >= 0 ? priceTabIdx : -1
 
     const products: Product[] = rows
       .slice(1)
       .filter((row: string[]) => row.length > 0 && row[codeIdx])
       .map((row: string[], idx: number) => {
-        const code = (row[codeIdx] || '').toString().trim()
-        const rawPrice =
-          parseFloat(
-            (row[priceIdx] || '0')
-              .toString()
-              .replace(/[^\d,.]/g, '')
-              .replace(',', '.')
-          ) || 0
+        const code        = (row[codeIdx] || '').toString().trim()
+        const reference   = refIdx >= 0 ? (row[refIdx] || '').toString().trim() : ''
+        const priceAtk    = parsePrice(row[priceIdx])
+        const priceTab    = origIdx >= 0 ? parsePrice(row[origIdx]) : priceAtk
+        const discount    = priceTab > priceAtk && priceTab > 0
+          ? Math.round(((priceTab - priceAtk) / priceTab) * 100)
+          : 0
 
         return {
           id: `product-${idx}-${code}`,
           code,
+          reference,
           name: (row[nameIdx] || '').toString().trim(),
           type: (row[typeIdx] || '').toString().trim(),
-          category: (row[categoryIdx] || '').toString().trim(),
-          price: rawPrice,
-          priceFormatted: formatCurrency(rawPrice),
-          margin:
-            marginIdx >= 0
-              ? parseFloat((row[marginIdx] || '0').toString()) || undefined
-              : undefined,
-          brand:
-            brandIdx >= 0
-              ? (row[brandIdx] || '').toString().trim() || undefined
-              : undefined,
+          category: categoryIdx >= 0 ? (row[categoryIdx] || '').toString().trim() : '',
+          priceOriginal: priceTab,
+          priceOriginalFormatted: formatCurrency(priceTab),
+          price: priceAtk,
+          priceFormatted: formatCurrency(priceAtk),
+          discountPercent: discount,
           hasImage: false,
           hidden: false,
         }
       })
       .filter((p: Product) => p.code.length > 0)
 
-    return NextResponse.json({ products, totalRows: rows.length - 1 })
+    return NextResponse.json({ products, headers, totalRows: rows.length - 1 })
   } catch (error) {
     console.error('Sheets API error:', error)
     return NextResponse.json(

@@ -39,15 +39,38 @@ export default function ExportButton() {
                 ? `/api/drive/${p.imageFileId}`
                 : null
               const imgHtml = imgSrc
-                ? `<img src="${imgSrc}" />`
+                ? `<img src="${imgSrc}" style="width:100%;height:100%;object-fit:contain;padding:8px;" />`
                 : `<div class="no-img">📦</div>`
+              const priceStr = p.priceFormatted
+              const priceMatch = priceStr.match(/^(.*[,\.])(\d{2})$/)
+              const priceMain = priceMatch ? priceMatch[1] : priceStr
+              const priceCents = priceMatch ? priceMatch[2] : ''
+              const discBadge = p.discountPercent > 0
+                ? `<span class="discount-badge">${p.discountPercent}% OFF</span>`
+                : ''
+              const origPrice = p.discountPercent > 0
+                ? `<span class="orig-price">${p.priceOriginalFormatted}</span>` : ''
               return `
             <div class="product-slot">
               <div class="product-img">${imgHtml}</div>
               <div class="product-info">
                 <p class="product-name">${p.name}</p>
-                <p class="product-code">${p.code}</p>
-                <p class="product-price">${p.priceFormatted}</p>
+                <div class="price-row">
+                  <div class="price-left">
+                    ${origPrice}${discBadge}
+                  </div>
+                  <div class="code-right">
+                    <span class="label">Código </span><strong>${p.code}</strong>
+                  </div>
+                </div>
+                <div class="price-main-row">
+                  <div class="price-main">
+                    <span class="price-rs">R$</span>
+                    <span class="price-int">${priceMain.replace('R$','').trim()}</span>
+                    <span class="price-cts">${priceCents}</span>
+                  </div>
+                  ${p.reference ? `<div class="code-right"><span class="label">Ref. </span><strong>${p.reference}</strong></div>` : ''}
+                </div>
               </div>
             </div>`
             })
@@ -103,22 +126,31 @@ export default function ExportButton() {
       const html = `<!DOCTYPE html><html><head><meta charset="UTF-8">
 <style>
 * { margin:0;padding:0;box-sizing:border-box; }
-body { background:white;font-family:Arial,sans-serif; }
-.catalog-page { width:1080px;height:1920px;display:flex;flex-direction:column;page-break-after:always;overflow:hidden;position:relative; }
+body { background:#e8e8e8;font-family:Arial,sans-serif; }
+.catalog-page { width:1080px;height:1920px;display:flex;flex-direction:column;page-break-after:always;overflow:hidden;position:relative;background:#e8e8e8; }
 .cover-page { background:#1B3A5C; }
-.page-header { background:#1B3A5C;color:white;padding:24px 36px;display:flex;justify-content:space-between;align-items:center;font-size:22px;font-weight:700;letter-spacing:5px;flex-shrink:0; }
-.product-grid { flex:1;display:grid;grid-template-columns:1fr 1fr;grid-template-rows:repeat(3,1fr);gap:2px;background:#e5e7eb;min-height:0; }
-.product-slot { background:white;display:flex;flex-direction:column;overflow:hidden; }
-.product-slot.empty { background:#f9fafb; }
-.product-img { flex:1;overflow:hidden;background:#f3f4f6;min-height:0; }
-.product-img img { width:100%;height:100%;object-fit:cover;display:block; }
+.page-header { background:#1B3A5C;color:white;padding:20px 32px;display:flex;justify-content:space-between;align-items:center;font-size:20px;font-weight:900;letter-spacing:6px;flex-shrink:0; }
+.product-grid { flex:1;display:grid;grid-template-columns:1fr 1fr;grid-template-rows:repeat(3,1fr);gap:12px;padding:12px;min-height:0; }
+.product-slot { background:white;display:flex;flex-direction:column;overflow:hidden;border-radius:12px;box-shadow:0 2px 8px rgba(0,0,0,0.10); }
+.product-slot.empty { background:white;border-radius:12px; }
+.product-img { flex:1;overflow:hidden;background:white;min-height:0;display:flex;align-items:center;justify-content:center; }
+.product-img img { width:100%;height:100%;object-fit:contain;display:block; }
 .no-img { width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:80px;background:#f3f4f6; }
-.product-info { padding:18px 22px;flex-shrink:0; }
-.product-name { font-size:22px;font-weight:600;color:#111827;line-height:1.3; }
-.product-code { font-size:15px;color:#9ca3af;margin-top:5px; }
-.product-price { font-size:26px;font-weight:700;color:#1B3A5C;margin-top:10px; }
-.page-footer { background:#0D1F33;color:white;padding:28px 36px;display:grid;grid-template-columns:1fr 1fr;gap:14px 28px;flex-shrink:0; }
-.footer-item { display:flex;flex-direction:column;gap:3px; }
+.product-info { padding:16px 18px 18px;flex-shrink:0;border-top:1px solid #f0f0f0; }
+.product-name { font-size:19px;font-weight:800;color:#111;line-height:1.3;text-transform:uppercase;margin-bottom:10px; }
+.price-row { display:flex;justify-content:space-between;align-items:center;margin-bottom:4px; }
+.price-left { display:flex;align-items:center;gap:8px; }
+.orig-price { font-size:15px;color:#999;text-decoration:line-through; }
+.discount-badge { background:#22c55e;color:white;font-size:13px;font-weight:700;padding:3px 8px;border-radius:6px; }
+.price-main-row { display:flex;justify-content:space-between;align-items:flex-end; }
+.price-main { display:flex;align-items:flex-start;gap:3px; }
+.price-rs { font-size:16px;font-weight:700;color:#111;margin-top:4px; }
+.price-int { font-size:36px;font-weight:900;color:#111;line-height:1; }
+.price-cts { font-size:16px;font-weight:700;color:#111;margin-top:4px; }
+.code-right { text-align:right;font-size:13px;color:#666; }
+.label { color:#aaa; }
+.page-footer { background:#0D1F33;color:white;padding:22px 32px;display:grid;grid-template-columns:1fr 1fr;gap:10px 24px;flex-shrink:0; }
+.footer-item { display:flex;flex-direction:column;gap:2px; }
 .footer-item.full { grid-column:span 2; }
 .footer-label { font-size:13px;color:rgba(255,255,255,0.45);text-transform:uppercase;letter-spacing:1.5px; }
 .footer-value { font-size:18px;font-weight:600; }
