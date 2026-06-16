@@ -22,41 +22,52 @@ function formatDate(d: string): string {
   return `${parseInt(day)} de ${months[parseInt(m) - 1]} de ${y}`
 }
 
-/* Page: 1080×1920. Header:60px Footer:130px Grid:1730px */
-/* Grid inner: 1730-24pad=1706, -24gaps=1682, /3=560px per row */
-/* Card width: 1080-24pad-12gap=1044, /2=522px */
 const PAGE_CSS = `
-* { margin:0;padding:0;box-sizing:border-box; }
-body { background:#e8e8e8;font-family:Arial,sans-serif; }
-.catalog-page { width:1080px;height:1920px;overflow:hidden;position:relative;background:#e8e8e8; }
-.cover-page { background:#312783; }
-.page-header { width:1080px;height:60px;background:#312783;color:white;padding:0 32px;display:flex;justify-content:space-between;align-items:center;font-size:20px;font-weight:900;letter-spacing:6px; }
-.product-grid { width:1080px;height:1730px;display:grid;grid-template-columns:522px 522px;grid-template-rows:560px 560px 560px;gap:12px;padding:12px; }
-.product-slot { width:522px;height:560px;background:white;overflow:hidden;border-radius:12px;box-shadow:0 2px 8px rgba(0,0,0,0.10); }
-.product-slot.empty { background:white;border-radius:12px; }
-.product-img { width:522px;height:292px;overflow:hidden;background:white;display:flex;align-items:center;justify-content:center; }
-.product-img img { max-width:500px;max-height:280px;width:auto;height:auto;display:block; }
-.no-img { width:522px;height:292px;display:flex;align-items:center;justify-content:center;font-size:80px;background:#f3f4f6; }
-.product-info { width:522px;height:268px;padding:10px 16px 12px;border-top:1px solid #f0f0f0;overflow:hidden; }
-.product-name { font-size:16px;font-weight:800;color:#111;line-height:1.25;margin-bottom:8px;height:40px;overflow:hidden; }
-.price-row { display:flex;justify-content:space-between;align-items:center;margin-bottom:4px; }
-.price-left { display:flex;align-items:center;gap:6px; }
-.orig-price { font-size:13px;color:#999;text-decoration:line-through; }
-.discount-badge { background:#22c55e;color:white;font-size:12px;font-weight:700;padding:2px 7px;border-radius:5px; }
-.price-main-row { display:flex;justify-content:space-between;align-items:flex-end; }
-.price-main { display:flex;align-items:flex-start;gap:2px; }
-.price-rs { font-size:15px;font-weight:700;color:#111;margin-top:3px; }
-.price-int { font-size:34px;font-weight:900;color:#111;line-height:1; }
-.price-cts { font-size:15px;font-weight:700;color:#111;margin-top:3px; }
-.code-right { text-align:right;font-size:12px;color:#666; }
-.label { color:#aaa; }
-.caixa-pill { display:inline-flex;align-items:center;gap:4px;background:#eff6ff;border-radius:6px;padding:2px 7px;margin-top:5px; }
-.caixa-pill-text { font-size:13px;font-weight:600;color:#1d4ed8; }
-.page-footer { width:1080px;height:130px;background:#0D1F33;color:white;padding:16px 32px;display:grid;grid-template-columns:1fr 1fr;gap:6px 24px;overflow:hidden; }
-.footer-item { display:flex;flex-direction:column;gap:2px; }
-.footer-item.full { grid-column:span 2; }
-.footer-label { font-size:12px;color:rgba(255,255,255,0.45);text-transform:uppercase;letter-spacing:1.5px; }
-.footer-value { font-size:16px;font-weight:600; }
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:Arial,Helvetica,sans-serif;background:#e8e8e8;}
+.page{width:1080px;height:1920px;display:flex;flex-direction:column;overflow:hidden;background:#e8e8e8;}
+.cover-page{background:#312783;}
+
+/* HEADER */
+.page-header{flex:none;height:96px;padding:0 36px;display:flex;align-items:center;justify-content:space-between;background:#312783;color:#fff;}
+.brand{display:flex;align-items:center;gap:16px;}
+.brand b{font-size:30px;font-weight:800;letter-spacing:.02em;}
+.sep{width:1px;height:30px;background:rgba(255,255,255,.35);}
+.sub{font-size:16px;font-weight:500;opacity:.9;}
+.pg{font-size:18px;font-weight:700;background:rgba(255,255,255,.14);padding:8px 18px;border-radius:999px;}
+
+/* GRID */
+.grid{flex:1 1 auto;display:grid;grid-template-columns:repeat(2,1fr);grid-template-rows:repeat(3,1fr);gap:22px;padding:24px;min-height:0;}
+
+/* CARD */
+.card{background:#fff;border-radius:14px;box-shadow:0 2px 14px rgba(0,0,0,.10);overflow:hidden;display:flex;flex-direction:column;}
+
+/* PHOTO — frame sempre 1:1, imagem nunca distorce */
+.photo{position:relative;background:#fafafa;display:flex;align-items:center;justify-content:center;padding:14px;flex:0 0 auto;}
+.frame{width:100%;aspect-ratio:1/1;background:#f4f4f4;display:flex;align-items:center;justify-content:center;overflow:hidden;border-radius:8px;}
+.frame img{width:100%;height:100%;object-fit:contain;}
+.no-photo{font-size:60px;}
+.badge{position:absolute;top:12px;left:12px;background:#1faa4d;color:#fff;font-size:12px;font-weight:800;padding:5px 10px;border-radius:7px;}
+
+/* INFO */
+.info{flex:1;border-top:1px solid #ececec;padding:14px 16px 15px;display:flex;flex-direction:column;gap:9px;overflow:hidden;}
+.name{font-weight:700;font-size:14px;line-height:1.25;color:#1f1f1f;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
+.price{display:flex;flex-direction:column;gap:2px;}
+.was{font-size:12px;color:#9a9a9a;text-decoration:line-through;}
+.now{display:flex;align-items:baseline;color:#161616;line-height:1;gap:3px;}
+.cur{font-size:15px;font-weight:700;}
+.int{font-size:34px;font-weight:800;letter-spacing:-1px;}
+.dec{font-size:16px;font-weight:700;}
+.pill{display:inline-flex;align-items:center;gap:6px;background:#e7effb;color:#1c3f86;font-weight:600;font-size:11px;padding:4px 10px;border-radius:999px;width:fit-content;}
+.meta{display:flex;align-items:center;gap:12px;border-top:1px solid #eee;padding-top:8px;font-size:11px;color:#8a8a8a;}
+.meta b{color:#444;font-weight:700;}
+
+/* FOOTER */
+.page-footer{flex:none;height:150px;padding:0 40px;display:flex;align-items:center;justify-content:space-between;gap:24px;background:#1d1d1f;color:#fff;}
+.fcol{display:flex;flex-direction:column;gap:5px;}
+.flbl{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:#9a9a9c;}
+.fval{font-size:16px;font-weight:700;}
+.fsep{width:1px;height:64px;background:rgba(255,255,255,.14);}
 `
 
 export default function ExportButton() {
@@ -91,13 +102,26 @@ export default function ExportButton() {
           ? `De ${formatDate(campaign.validityFrom)} a ${formatDate(campaign.validityTo)}`
           : campaign.validityFrom ? `A partir de ${formatDate(campaign.validityFrom)}` : ''
 
-      // Build array of page HTML strings
+      const footerCols = [
+        ['Pagamento', campaign.paymentTerms],
+        ['Pedido Mínimo', campaign.minimumOrder],
+        ...(validity ? [['Validade', validity]] : []),
+        ['Praça', campaign.plaza],
+        ['Contato', campaign.commercialEmail],
+      ]
+
+      const footerHtml = footerCols.map(([l, v], i) => `
+        ${i ? '<div class="fsep"></div>' : ''}
+        <div class="fcol"><div class="flbl">${l}</div><div class="fval">${v}</div></div>
+      `).join('')
+
+      // Build page HTML strings
       const allPageHtmls: string[] = []
 
-      // Cover page
+      // Cover
       if (campaign.coverImageBase64) {
         allPageHtmls.push(`
-          <div class="catalog-page cover-page">
+          <div class="page cover-page" style="position:relative;">
             <img src="${campaign.coverImageBase64}" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;" />
             <div style="position:absolute;bottom:0;left:0;right:0;background:linear-gradient(to top,rgba(13,31,51,0.9),transparent);padding:60px 50px 50px;">
               <h1 style="color:white;font-size:52px;font-weight:700;line-height:1.2;">${campaign.title}</h1>
@@ -111,76 +135,70 @@ export default function ExportButton() {
         const page = pages[i]
         const slots = Array.from({ length: 6 }).map((_, j) => {
           const p = page.products[j]
-          if (!p) return `<div class="product-slot empty"></div>`
+          if (!p) return `<div class="card" style="background:#f9f9f9;border-radius:14px;"></div>`
+
           const imgSrc = p.customImageBase64 || (p.imageFileId && imageCache[p.imageFileId]) || null
           const imgHtml = imgSrc
-            ? `<img src="${imgSrc}" style="width:100%;height:100%;object-fit:contain;padding:8px;" />`
-            : `<div class="no-img">📦</div>`
-          const priceMatch = p.priceFormatted.match(/^(.*[,\.])(\d{2})$/)
-          const priceMain = priceMatch ? priceMatch[1] : p.priceFormatted
-          const priceCents = priceMatch ? priceMatch[2] : ''
+            ? `<img src="${imgSrc}" alt="" />`
+            : `<span class="no-photo">📦</span>`
+
+          const priceMatch = p.priceFormatted.match(/^R?\$?\s*([\d.]+)[,.](\d{2})$/)
+          const int = priceMatch ? priceMatch[1] : p.priceFormatted.replace('R$','').trim()
+          const dec = priceMatch ? priceMatch[2] : ''
+
           return `
-            <div class="product-slot">
-              <div class="product-img">${imgHtml}</div>
-              <div class="product-info">
-                <p class="product-name">${p.name}</p>
-                <div class="price-row">
-                  <div class="price-left">
-                    ${p.discountPercent > 0 ? `<span class="orig-price">${p.priceOriginalFormatted}</span><span class="discount-badge">${p.discountPercent}% OFF</span>` : ''}
-                  </div>
-                  <div class="code-right"><span class="label">Código </span><strong>${p.code}</strong></div>
+            <div class="card">
+              <div class="photo">
+                <div class="frame">${imgHtml}</div>
+                ${p.discountPercent > 0 ? `<div class="badge">${p.discountPercent}% OFF</div>` : ''}
+              </div>
+              <div class="info">
+                <div class="name">${p.name}</div>
+                <div class="price">
+                  ${p.discountPercent > 0 ? `<span class="was">${p.priceOriginalFormatted}</span>` : ''}
+                  <div class="now"><span class="cur">R$</span><span class="int">${int}</span><span class="dec">,${dec}</span></div>
                 </div>
-                <div class="price-main-row">
-                  <div class="price-main">
-                    <span class="price-rs">R$</span>
-                    <span class="price-int">${priceMain.replace('R$', '').trim()}</span>
-                    <span class="price-cts">${priceCents}</span>
-                  </div>
-                  ${p.reference ? `<div class="code-right"><span class="label">Ref. </span><strong>${p.reference}</strong></div>` : ''}
-                </div>
-                ${p.caixaMaster ? `<div class="caixa-pill"><span>📦</span><span class="caixa-pill-text">Cx. Master ${p.caixaMaster} peças</span></div>` : ''}
+                ${p.caixaMaster ? `<div class="pill">📦 Cx. Master ${p.caixaMaster} peças</div>` : ''}
+                <div class="meta"><span>Cód. <b>${p.code}</b></span><span>Ref. <b>${p.reference}</b></span></div>
               </div>
             </div>`
         }).join('')
 
         allPageHtmls.push(`
-          <div class="catalog-page">
-            <div class="page-header"><span>CASA FREITAS</span><span>Pg. ${i + 1}</span></div>
-            <div class="product-grid">${slots}</div>
-            <div class="page-footer">
-              <div class="footer-item"><span class="footer-label">Pagamento</span><span class="footer-value">${campaign.paymentTerms}</span></div>
-              <div class="footer-item"><span class="footer-label">Pedido Mínimo</span><span class="footer-value">${campaign.minimumOrder}</span></div>
-              ${validity ? `<div class="footer-item full"><span class="footer-label">Validade</span><span class="footer-value">${validity}</span></div>` : ''}
-              <div class="footer-item"><span class="footer-label">Praça</span><span class="footer-value">${campaign.plaza}</span></div>
-              <div class="footer-item"><span class="footer-label">Contato</span><span class="footer-value">${campaign.commercialEmail}</span></div>
-            </div>
+          <div class="page">
+            <header class="page-header">
+              <div class="brand"><b>CASA FREITAS</b><span class="sep"></span><span class="sub">Encarte B2B</span></div>
+              <div class="pg">Pg. ${i + 1} / ${pages.length}</div>
+            </header>
+            <div class="grid">${slots}</div>
+            <footer class="page-footer">${footerHtml}</footer>
           </div>`)
       }
 
       const pdf = new jsPDF({ orientation: 'portrait', unit: 'px', format: [1080, 1920] })
 
-      // Render each page
       const container = document.createElement('div')
       container.style.cssText = 'position:fixed;top:-9999px;left:-9999px;width:1080px;height:1920px;overflow:hidden;z-index:-1;'
-      const style = document.createElement('style')
-      style.textContent = PAGE_CSS
-      container.appendChild(style)
+      const styleEl = document.createElement('style')
+      styleEl.textContent = PAGE_CSS
+      container.appendChild(styleEl)
       const inner = document.createElement('div')
       container.appendChild(inner)
       document.body.appendChild(container)
 
       for (let i = 0; i < allPageHtmls.length; i++) {
         inner.innerHTML = allPageHtmls[i]
-        // Wait for images
         await Promise.all(
           Array.from(inner.querySelectorAll('img')).map(img =>
             (img as HTMLImageElement).complete
               ? Promise.resolve()
-              : new Promise(r => { (img as HTMLImageElement).onload = r; (img as HTMLImageElement).onerror = r })
+              : new Promise(r => {
+                  (img as HTMLImageElement).onload = r
+                  (img as HTMLImageElement).onerror = r
+                })
           )
         )
-        // Small delay for layout
-        await new Promise(r => setTimeout(r, 50))
+        await new Promise(r => setTimeout(r, 80))
 
         const canvas = await html2canvas(inner.firstElementChild as HTMLElement, {
           scale: 1,
@@ -193,14 +211,12 @@ export default function ExportButton() {
         })
 
         if (i > 0) pdf.addPage([1080, 1920], 'portrait')
-        pdf.addImage(canvas.toDataURL('image/jpeg', 0.55), 'JPEG', 0, 0, 1080, 1920)
+        pdf.addImage(canvas.toDataURL('image/jpeg', 0.60), 'JPEG', 0, 0, 1080, 1920)
         setProgress(Math.round(((i + 1) / allPageHtmls.length) * 100))
       }
 
       document.body.removeChild(container)
-
-      const title = campaign.title.replace(/\s+/g, '-').toLowerCase()
-      pdf.save(`encarte-${title}.pdf`)
+      pdf.save(`encarte-${campaign.title.replace(/\s+/g, '-').toLowerCase()}.pdf`)
     } catch (err) {
       alert('Erro ao gerar PDF. Verifica o console para mais detalhes.')
       console.error(err)
