@@ -189,14 +189,11 @@ export default function ExportButton() {
       for (let i = 0; i < allPageHtmls.length; i++) {
         inner.innerHTML = allPageHtmls[i]
         await Promise.all(
-          Array.from(inner.querySelectorAll('img')).map(img =>
-            (img as HTMLImageElement).complete
-              ? Promise.resolve()
-              : new Promise(r => {
-                  (img as HTMLImageElement).onload = r
-                  (img as HTMLImageElement).onerror = r
-                })
-          )
+          Array.from(inner.querySelectorAll('img')).map(img => {
+            const el = img as HTMLImageElement
+            if (el.complete) return Promise.resolve()
+            return new Promise<void>(r => { el.onload = () => r(); el.onerror = () => r() })
+          })
         )
         await new Promise(r => setTimeout(r, 80))
 
