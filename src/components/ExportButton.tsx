@@ -42,12 +42,13 @@ body{font-family:Arial,Helvetica,sans-serif;background:#e8e8e8;}
 /* CARD */
 .card{background:#fff;border-radius:14px;box-shadow:0 2px 14px rgba(0,0,0,.10);overflow:hidden;display:flex;flex-direction:column;}
 
-/* PHOTO — frame sempre 1:1, imagem nunca distorce */
-.photo{position:relative;background:#fafafa;display:flex;align-items:center;justify-content:center;padding:14px;flex:0 0 auto;}
-.frame{width:100%;aspect-ratio:1/1;background:#f4f4f4;display:flex;align-items:center;justify-content:center;overflow:hidden;border-radius:8px;}
+/* PHOTO — padding-bottom trick: html2canvas does not support aspect-ratio */
+.photo{position:relative;background:#fafafa;padding:14px;flex:0 0 auto;}
+.frame-wrap{position:relative;width:100%;padding-bottom:100%;}
+.frame{position:absolute;inset:0;background:#f4f4f4;display:flex;align-items:center;justify-content:center;overflow:hidden;border-radius:8px;}
 .frame img{width:100%;height:100%;object-fit:contain;}
 .no-photo{font-size:60px;}
-.badge{position:absolute;top:12px;left:12px;background:#1faa4d;color:#fff;font-size:12px;font-weight:800;padding:5px 10px;border-radius:7px;}
+.badge{position:absolute;top:12px;left:12px;background:#1faa4d;color:#fff;font-size:12px;font-weight:800;padding:5px 10px;border-radius:7px;z-index:1;}
 
 /* INFO */
 .info{flex:1;border-top:1px solid #ececec;padding:14px 16px 15px;display:flex;flex-direction:column;gap:9px;overflow:hidden;}
@@ -149,7 +150,9 @@ export default function ExportButton() {
           return `
             <div class="card">
               <div class="photo">
-                <div class="frame">${imgHtml}</div>
+                <div class="frame-wrap">
+                  <div class="frame">${imgHtml}</div>
+                </div>
                 ${p.discountPercent > 0 ? `<div class="badge">${p.discountPercent}% OFF</div>` : ''}
               </div>
               <div class="info">
