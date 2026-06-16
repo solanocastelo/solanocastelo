@@ -27,27 +27,27 @@ const PAGE_CSS = `
 body { background:#e8e8e8;font-family:Arial,sans-serif; }
 .catalog-page { width:1080px;height:1920px;display:flex;flex-direction:column;overflow:hidden;position:relative;background:#e8e8e8; }
 .cover-page { background:#312783; }
-.page-header { background:#312783;color:white;padding:20px 32px;display:flex;justify-content:space-between;align-items:center;font-size:20px;font-weight:900;letter-spacing:6px;flex-shrink:0; }
-.product-grid { flex:1;display:grid;grid-template-columns:1fr 1fr;grid-template-rows:repeat(3,1fr);gap:12px;padding:12px;min-height:0; }
+.page-header { background:#312783;color:white;padding:20px 32px;display:flex;justify-content:space-between;align-items:center;font-size:20px;font-weight:900;letter-spacing:6px;flex-shrink:0;height:64px; }
+.product-grid { flex:1;display:grid;grid-template-columns:1fr 1fr;grid-template-rows:repeat(3,1fr);gap:12px;padding:12px;min-height:0;overflow:hidden; }
 .product-slot { background:white;display:flex;flex-direction:column;overflow:hidden;border-radius:12px;box-shadow:0 2px 8px rgba(0,0,0,0.10); }
 .product-slot.empty { background:white;border-radius:12px; }
-.product-img { flex:1;overflow:hidden;background:white;min-height:0;display:flex;align-items:center;justify-content:center; }
-.product-img img { width:100%;height:100%;object-fit:contain;display:block; }
+.product-img { flex:0 0 52%;overflow:hidden;background:white;display:flex;align-items:center;justify-content:center; }
+.product-img img { max-width:100%;max-height:100%;width:auto;height:auto;object-fit:contain;display:block; }
 .no-img { width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:80px;background:#f3f4f6; }
-.product-info { padding:16px 18px 18px;flex-shrink:0;border-top:1px solid #f0f0f0; }
-.product-name { font-size:19px;font-weight:800;color:#111;line-height:1.3;margin-bottom:10px; }
+.product-info { flex:0 0 48%;padding:12px 16px 14px;flex-shrink:0;border-top:1px solid #f0f0f0;overflow:hidden; }
+.product-name { font-size:17px;font-weight:800;color:#111;line-height:1.25;margin-bottom:8px;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical; }
 .price-row { display:flex;justify-content:space-between;align-items:center;margin-bottom:4px; }
-.price-left { display:flex;align-items:center;gap:8px; }
-.orig-price { font-size:15px;color:#999;text-decoration:line-through; }
-.discount-badge { background:#22c55e;color:white;font-size:13px;font-weight:700;padding:3px 8px;border-radius:6px; }
+.price-left { display:flex;align-items:center;gap:6px; }
+.orig-price { font-size:13px;color:#999;text-decoration:line-through; }
+.discount-badge { background:#22c55e;color:white;font-size:12px;font-weight:700;padding:2px 7px;border-radius:5px; }
 .price-main-row { display:flex;justify-content:space-between;align-items:flex-end; }
-.price-main { display:flex;align-items:flex-start;gap:3px; }
-.price-rs { font-size:16px;font-weight:700;color:#111;margin-top:4px; }
-.price-int { font-size:36px;font-weight:900;color:#111;line-height:1; }
-.price-cts { font-size:16px;font-weight:700;color:#111;margin-top:4px; }
-.code-right { text-align:right;font-size:13px;color:#666; }
+.price-main { display:flex;align-items:flex-start;gap:2px; }
+.price-rs { font-size:15px;font-weight:700;color:#111;margin-top:3px; }
+.price-int { font-size:34px;font-weight:900;color:#111;line-height:1; }
+.price-cts { font-size:15px;font-weight:700;color:#111;margin-top:3px; }
+.code-right { text-align:right;font-size:12px;color:#666; }
 .label { color:#aaa; }
-.caixa-pill { display:inline-flex;align-items:center;gap:4px;background:#eff6ff;border-radius:6px;padding:3px 8px;margin-top:6px; }
+.caixa-pill { display:inline-flex;align-items:center;gap:4px;background:#eff6ff;border-radius:6px;padding:2px 7px;margin-top:5px; }
 .caixa-pill-text { font-size:13px;font-weight:600;color:#1d4ed8; }
 .page-footer { background:#0D1F33;color:white;padding:22px 32px;display:grid;grid-template-columns:1fr 1fr;gap:10px 24px;flex-shrink:0; }
 .footer-item { display:flex;flex-direction:column;gap:2px; }
@@ -180,16 +180,17 @@ export default function ExportButton() {
         await new Promise(r => setTimeout(r, 50))
 
         const canvas = await html2canvas(inner.firstElementChild as HTMLElement, {
-          scale: 2,
+          scale: 1,
           useCORS: true,
           allowTaint: true,
           width: 1080,
           height: 1920,
           backgroundColor: '#e8e8e8',
+          logging: false,
         })
 
         if (i > 0) pdf.addPage([1080, 1920], 'portrait')
-        pdf.addImage(canvas.toDataURL('image/jpeg', 0.90), 'JPEG', 0, 0, 1080, 1920)
+        pdf.addImage(canvas.toDataURL('image/jpeg', 0.55), 'JPEG', 0, 0, 1080, 1920)
         setProgress(Math.round(((i + 1) / allPageHtmls.length) * 100))
       }
 
