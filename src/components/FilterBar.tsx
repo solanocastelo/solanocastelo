@@ -48,6 +48,7 @@ export default function FilterBar() {
           onChange={e => handleChange(() => setSortMode(e.target.value as 'auto' | 'manual'))}
           className="text-xs border border-gray-200 rounded-lg px-2 py-1.5 bg-white text-gray-700 focus:outline-none focus:border-[#312783]"
         >
+          <option value="original">Ordem da Planilha</option>
           <option value="auto">Ordem Automática</option>
           <option value="manual">Ordem Manual</option>
         </select>

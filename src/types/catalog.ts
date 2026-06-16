@@ -54,5 +54,5 @@ export interface CatalogState {
   filterNoImage: boolean
   filterCategory: string
   filterType: string
-  sortMode: 'auto' | 'manual'
+  sortMode: 'auto' | 'manual' | 'original'
 }

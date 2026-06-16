@@ -22,20 +22,23 @@ function formatDate(d: string): string {
   return `${parseInt(day)} de ${months[parseInt(m) - 1]} de ${y}`
 }
 
+/* Page: 1080×1920. Header:60px Footer:130px Grid:1730px */
+/* Grid inner: 1730-24pad=1706, -24gaps=1682, /3=560px per row */
+/* Card width: 1080-24pad-12gap=1044, /2=522px */
 const PAGE_CSS = `
 * { margin:0;padding:0;box-sizing:border-box; }
 body { background:#e8e8e8;font-family:Arial,sans-serif; }
-.catalog-page { width:1080px;height:1920px;display:flex;flex-direction:column;overflow:hidden;position:relative;background:#e8e8e8; }
+.catalog-page { width:1080px;height:1920px;overflow:hidden;position:relative;background:#e8e8e8; }
 .cover-page { background:#312783; }
-.page-header { background:#312783;color:white;padding:20px 32px;display:flex;justify-content:space-between;align-items:center;font-size:20px;font-weight:900;letter-spacing:6px;flex-shrink:0;height:64px; }
-.product-grid { flex:1;display:grid;grid-template-columns:1fr 1fr;grid-template-rows:repeat(3,1fr);gap:12px;padding:12px;min-height:0;overflow:hidden; }
-.product-slot { background:white;display:flex;flex-direction:column;overflow:hidden;border-radius:12px;box-shadow:0 2px 8px rgba(0,0,0,0.10); }
+.page-header { width:1080px;height:60px;background:#312783;color:white;padding:0 32px;display:flex;justify-content:space-between;align-items:center;font-size:20px;font-weight:900;letter-spacing:6px; }
+.product-grid { width:1080px;height:1730px;display:grid;grid-template-columns:522px 522px;grid-template-rows:560px 560px 560px;gap:12px;padding:12px; }
+.product-slot { width:522px;height:560px;background:white;overflow:hidden;border-radius:12px;box-shadow:0 2px 8px rgba(0,0,0,0.10); }
 .product-slot.empty { background:white;border-radius:12px; }
-.product-img { flex:0 0 52%;overflow:hidden;background:white;display:flex;align-items:center;justify-content:center; }
-.product-img img { max-width:100%;max-height:100%;width:auto;height:auto;object-fit:contain;display:block; }
-.no-img { width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:80px;background:#f3f4f6; }
-.product-info { flex:0 0 48%;padding:12px 16px 14px;flex-shrink:0;border-top:1px solid #f0f0f0;overflow:hidden; }
-.product-name { font-size:17px;font-weight:800;color:#111;line-height:1.25;margin-bottom:8px;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical; }
+.product-img { width:522px;height:292px;overflow:hidden;background:white;display:flex;align-items:center;justify-content:center; }
+.product-img img { max-width:500px;max-height:280px;width:auto;height:auto;display:block; }
+.no-img { width:522px;height:292px;display:flex;align-items:center;justify-content:center;font-size:80px;background:#f3f4f6; }
+.product-info { width:522px;height:268px;padding:10px 16px 12px;border-top:1px solid #f0f0f0;overflow:hidden; }
+.product-name { font-size:16px;font-weight:800;color:#111;line-height:1.25;margin-bottom:8px;height:40px;overflow:hidden; }
 .price-row { display:flex;justify-content:space-between;align-items:center;margin-bottom:4px; }
 .price-left { display:flex;align-items:center;gap:6px; }
 .orig-price { font-size:13px;color:#999;text-decoration:line-through; }
@@ -49,11 +52,11 @@ body { background:#e8e8e8;font-family:Arial,sans-serif; }
 .label { color:#aaa; }
 .caixa-pill { display:inline-flex;align-items:center;gap:4px;background:#eff6ff;border-radius:6px;padding:2px 7px;margin-top:5px; }
 .caixa-pill-text { font-size:13px;font-weight:600;color:#1d4ed8; }
-.page-footer { background:#0D1F33;color:white;padding:22px 32px;display:grid;grid-template-columns:1fr 1fr;gap:10px 24px;flex-shrink:0; }
+.page-footer { width:1080px;height:130px;background:#0D1F33;color:white;padding:16px 32px;display:grid;grid-template-columns:1fr 1fr;gap:6px 24px;overflow:hidden; }
 .footer-item { display:flex;flex-direction:column;gap:2px; }
 .footer-item.full { grid-column:span 2; }
-.footer-label { font-size:13px;color:rgba(255,255,255,0.45);text-transform:uppercase;letter-spacing:1.5px; }
-.footer-value { font-size:18px;font-weight:600; }
+.footer-label { font-size:12px;color:rgba(255,255,255,0.45);text-transform:uppercase;letter-spacing:1.5px; }
+.footer-value { font-size:16px;font-weight:600; }
 `
 
 export default function ExportButton() {

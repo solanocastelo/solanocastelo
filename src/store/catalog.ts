@@ -11,7 +11,7 @@ interface CatalogStore extends CatalogState {
   toggleFilterNoImage: () => void
   setFilterCategory: (cat: string) => void
   setFilterType: (type: string) => void
-  setSortMode: (mode: 'auto' | 'manual') => void
+  setSortMode: (mode: 'auto' | 'manual' | 'original') => void
   reorderPages: (pages: CatalogPage[]) => void
   moveProduct: (productId: string, targetPageIndex: number, targetPosition: number) => void
   setSelectedProduct: (id: string | null) => void
@@ -105,6 +105,7 @@ export const useCatalogStore = create<CatalogStore>((set, get) => ({
     if (state.sortMode === 'auto') {
       filtered = autoSortProducts(filtered)
     }
+    // 'original' and 'manual' preserve current order
     set({ pages: buildPages(filtered) })
   },
 }))
