@@ -12,6 +12,7 @@ interface Props {
 
 export default function ImageManager({ product, onClose }: Props) {
   const { updateProductImage } = useCatalogStore()
+  const [driveIdx, setDriveIdx] = useState(0)
   const [src, setSrc] = useState<string>(
     product.customImageBase64 ||
       (product.imageFileId ? `/api/drive/${product.imageFileId}` : '')
@@ -94,7 +95,7 @@ export default function ImageManager({ product, onClose }: Props) {
           <div className="flex gap-2">
             <button
               onClick={() => fileInputRef.current?.click()}
-              className="bg-[#1B3A5C] text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-[#1B3A5C]/90"
+              className="bg-[#312783] text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-[#312783]/90"
             >
               Upload Manual
             </button>
@@ -106,6 +107,28 @@ export default function ImageManager({ product, onClose }: Props) {
               className="hidden"
             />
           </div>
+
+          {product.imageFileIds && product.imageFileIds.length > 1 && (
+            <div>
+              <p className="text-xs text-gray-500 mb-2">Fotos disponíveis no Drive ({product.imageFileIds.length})</p>
+              <div className="flex gap-2 flex-wrap">
+                {product.imageFileIds.map((fid, idx) => (
+                  <button
+                    key={fid}
+                    onClick={() => {
+                      setDriveIdx(idx)
+                      setSrc(`/api/drive/${fid}`)
+                    }}
+                    className={`w-16 h-16 rounded-lg overflow-hidden border-2 transition-colors ${
+                      driveIdx === idx ? 'border-[#312783]' : 'border-gray-200'
+                    }`}
+                  >
+                    <img src={`/api/drive/${fid}`} alt={`Foto ${idx+1}`} className="w-full h-full object-contain" />
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
 
           {src ? (
             <div className="border rounded-xl overflow-hidden">
@@ -129,7 +152,7 @@ export default function ImageManager({ product, onClose }: Props) {
             </div>
           ) : (
             <div
-              className="border-2 border-dashed border-gray-300 rounded-xl p-12 text-center cursor-pointer hover:border-[#1B3A5C] transition-colors"
+              className="border-2 border-dashed border-gray-300 rounded-xl p-12 text-center cursor-pointer hover:border-[#312783] transition-colors"
               onClick={() => fileInputRef.current?.click()}
             >
               <div className="text-4xl mb-2">📸</div>
@@ -147,7 +170,7 @@ export default function ImageManager({ product, onClose }: Props) {
           </button>
           <button
             onClick={handleSave}
-            className="bg-[#1B3A5C] text-white px-6 py-2 rounded-lg text-sm font-medium hover:bg-[#1B3A5C]/90"
+            className="bg-[#312783] text-white px-6 py-2 rounded-lg text-sm font-medium hover:bg-[#312783]/90"
           >
             Guardar
           </button>

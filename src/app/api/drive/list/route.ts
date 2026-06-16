@@ -27,16 +27,13 @@ export async function GET() {
       pageToken = response.data.nextPageToken || undefined
     } while (pageToken)
 
-    const imageMap: Record<string, string> = {}
+    const imageMap: Record<string, string[]> = {}
     for (const file of allFiles) {
       const nameWithoutExt = file.name.replace(/\.[^/.]+$/, '')
-      // Match 13-char alphanumeric code at the start of the filename
       const codeMatch = nameWithoutExt.match(/^([A-Za-z0-9]{13})/)
-      if (codeMatch) {
-        imageMap[codeMatch[1]] = file.id
-      } else {
-        imageMap[nameWithoutExt] = file.id
-      }
+      const key = codeMatch ? codeMatch[1] : nameWithoutExt
+      if (!imageMap[key]) imageMap[key] = []
+      imageMap[key].push(file.id)
     }
 
     return NextResponse.json({ imageMap, total: allFiles.length })

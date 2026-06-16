@@ -23,7 +23,7 @@ function formatValidity(from: string, to: string): string {
 
 export function CoverPage({ campaign }: { campaign: CampaignConfig }) {
   return (
-    <div className="catalog-page bg-[#1B3A5C]">
+    <div className="catalog-page bg-[#312783]">
       {campaign.coverImageBase64 ? (
         <img
           src={campaign.coverImageBase64}
@@ -53,7 +53,7 @@ export default function CatalogPagePreview({ page, pageIndex, campaign }: Props)
   return (
     <div className="catalog-page" id={`catalog-page-${pageIndex}`} style={{ background: '#e8e8e8' }}>
       {/* Header */}
-      <div className="bg-[#1B3A5C] text-white px-3 py-1.5 flex items-center justify-between flex-shrink-0">
+      <div className="bg-[#312783] text-white px-3 py-1.5 flex items-center justify-between flex-shrink-0">
         <span className="text-[9px] font-black tracking-widest uppercase">Casa Freitas</span>
         <span className="text-[8px] text-white/50">Pg. {pageIndex + 1}</span>
       </div>

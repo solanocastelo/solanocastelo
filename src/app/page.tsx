@@ -26,15 +26,17 @@ export default function Home() {
       if (sheetsData.error) throw new Error(sheetsData.error)
 
       const driveData = await driveRes.json()
-      const imageMap: Record<string, string> = driveData.imageMap || {}
+      const imageMap: Record<string, string[]> = driveData.imageMap || {}
 
       const enriched: Product[] = (sheetsData.products || []).map((p: Product) => {
-        const fileId = imageMap[p.code]
+        const fileIds = imageMap[p.code] || []
+        const fileId = fileIds[0]
         return {
           ...p,
+          imageFileIds: fileIds,
           imageFileId: fileId,
           imageUrl: fileId ? `/api/drive/${fileId}` : undefined,
-          hasImage: !!fileId,
+          hasImage: fileIds.length > 0,
         }
       })
 
@@ -49,7 +51,7 @@ export default function Home() {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
-      <header className="bg-[#1B3A5C] text-white shadow-lg sticky top-0 z-30">
+      <header className="bg-[#312783] text-white shadow-lg sticky top-0 z-30">
         <div className="max-w-screen-2xl mx-auto px-6 py-4 flex items-center justify-between">
           <div className="flex items-center gap-4">
             <div className="w-10 h-10 bg-[#C8992A] rounded-xl flex items-center justify-center font-bold text-[#0D1F33] text-lg">
@@ -119,7 +121,7 @@ export default function Home() {
         {/* Right Panel — Stats + Setup Guide */}
         <aside className="space-y-4">
           <div className="bg-white rounded-xl border border-gray-200 p-5">
-            <h3 className="font-semibold text-[#1B3A5C] text-sm uppercase tracking-wider mb-4 flex items-center gap-2">
+            <h3 className="font-semibold text-[#312783] text-sm uppercase tracking-wider mb-4 flex items-center gap-2">
               <span className="w-2 h-2 rounded-full bg-[#C8992A] inline-block" />
               Resumo
             </h3>
@@ -134,14 +136,14 @@ export default function Home() {
               ].map(({ label, value }) => (
                 <div key={label} className="flex items-center justify-between">
                   <span className="text-xs text-gray-500">{label}</span>
-                  <span className="text-sm font-bold text-[#1B3A5C]">{value}</span>
+                  <span className="text-sm font-bold text-[#312783]">{value}</span>
                 </div>
               ))}
             </div>
           </div>
 
           <div className="bg-white rounded-xl border border-gray-200 p-5">
-            <h3 className="font-semibold text-[#1B3A5C] text-sm uppercase tracking-wider mb-3 flex items-center gap-2">
+            <h3 className="font-semibold text-[#312783] text-sm uppercase tracking-wider mb-3 flex items-center gap-2">
               <span className="w-2 h-2 rounded-full bg-[#C8992A] inline-block" />
               Setup Google APIs
             </h3>
@@ -153,7 +155,7 @@ export default function Home() {
                     href="https://console.cloud.google.com"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-[#1B3A5C] underline"
+                    className="text-[#312783] underline"
                   >
                     Google Cloud Console
                   </a>

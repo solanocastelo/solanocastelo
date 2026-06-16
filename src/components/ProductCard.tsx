@@ -73,7 +73,7 @@ export default function ProductCard({ product, compact = false }: Props) {
         {/* Info */}
         <div className="flex-shrink-0 px-1.5 pb-1.5 pt-1 border-t border-gray-100" style={{ flex: '0 0 48%' }}>
           {/* Nome */}
-          <p className="text-[7.5px] font-bold text-gray-900 uppercase leading-tight line-clamp-2 mb-1">
+          <p className="text-[7.5px] font-bold text-gray-900 leading-tight line-clamp-2 mb-1">
             {product.name}
           </p>
 
@@ -114,9 +114,9 @@ export default function ProductCard({ product, compact = false }: Props) {
 
           {/* Caixa Master */}
           {product.caixaMaster && (
-            <div className="mt-1 flex items-center gap-0.5 bg-blue-50 rounded px-1.5 py-0.5 w-fit">
+            <div className="mt-1 flex items-center gap-0.5 bg-[#312783]/10 rounded px-1.5 py-0.5 w-fit">
               <span className="text-[7px]">📦</span>
-              <span className="text-[6.5px] font-semibold text-blue-700">Cx. Master {product.caixaMaster} peças</span>
+              <span className="text-[6.5px] font-semibold text-[#312783]">Cx. Master {product.caixaMaster} peças</span>
             </div>
           )}
         </div>
@@ -133,7 +133,7 @@ export default function ProductCard({ product, compact = false }: Props) {
     <div
       ref={setNodeRef}
       style={style}
-      className={`flex items-center gap-3 bg-white rounded-xl border border-gray-100 p-3 cursor-grab active:cursor-grabbing hover:border-[#1B3A5C]/30 hover:shadow-sm transition-all ${
+      className={`flex items-center gap-3 bg-white rounded-xl border border-gray-100 p-3 cursor-grab active:cursor-grabbing hover:border-[#312783]/30 hover:shadow-sm transition-all ${
         product.hidden ? 'opacity-40' : ''
       }`}
       {...attributes}
@@ -180,7 +180,7 @@ export default function ProductCard({ product, compact = false }: Props) {
           onClick={e => { e.stopPropagation(); toggleProductHidden(product.id) }}
           className={`text-[10px] px-2 py-1 rounded-lg transition-colors ${
             product.hidden
-              ? 'bg-[#1B3A5C] text-white'
+              ? 'bg-[#312783] text-white'
               : 'bg-gray-100 hover:bg-gray-200 text-gray-600'
           }`}
         >

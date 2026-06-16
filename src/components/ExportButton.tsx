@@ -2,6 +2,19 @@
 import { useState } from 'react'
 import { useCatalogStore } from '@/store/catalog'
 
+async function fetchBase64(url: string): Promise<string | null> {
+  try {
+    const res = await fetch(url)
+    if (!res.ok) return null
+    const blob = await res.blob()
+    return new Promise(resolve => {
+      const reader = new FileReader()
+      reader.onloadend = () => resolve(reader.result as string)
+      reader.readAsDataURL(blob)
+    })
+  } catch { return null }
+}
+
 function formatDate(d: string): string {
   if (!d) return ''
   const [y, m, day] = d.split('-')
@@ -27,6 +40,18 @@ export default function ExportButton() {
           ? `A partir de ${formatDate(campaign.validityFrom)}`
           : ''
 
+      // Pre-fetch all Drive images as base64
+      const allProducts = pages.flatMap(p => p.products)
+      const imageCache: Record<string, string> = {}
+      await Promise.all(
+        allProducts
+          .filter(p => p.imageFileId && !p.customImageBase64)
+          .map(async p => {
+            const b64 = await fetchBase64(`/api/drive/${p.imageFileId}`)
+            if (b64) imageCache[p.imageFileId!] = b64
+          })
+      )
+
       const pagesHtml = pages
         .map((page, i) => {
           const products = Array.from({ length: 6 })
@@ -35,8 +60,8 @@ export default function ExportButton() {
               if (!p) return `<div class="product-slot empty"></div>`
               const imgSrc = p.customImageBase64
                 ? p.customImageBase64
-                : p.imageFileId
-                ? `/api/drive/${p.imageFileId}`
+                : p.imageFileId && imageCache[p.imageFileId]
+                ? imageCache[p.imageFileId]
                 : null
               const imgHtml = imgSrc
                 ? `<img src="${imgSrc}" style="width:100%;height:100%;object-fit:contain;padding:8px;" />`
@@ -129,8 +154,8 @@ export default function ExportButton() {
 * { margin:0;padding:0;box-sizing:border-box; }
 body { background:#e8e8e8;font-family:Arial,sans-serif; }
 .catalog-page { width:1080px;height:1920px;display:flex;flex-direction:column;page-break-after:always;overflow:hidden;position:relative;background:#e8e8e8; }
-.cover-page { background:#1B3A5C; }
-.page-header { background:#1B3A5C;color:white;padding:20px 32px;display:flex;justify-content:space-between;align-items:center;font-size:20px;font-weight:900;letter-spacing:6px;flex-shrink:0; }
+.cover-page { background:#312783; }
+.page-header { background:#312783;color:white;padding:20px 32px;display:flex;justify-content:space-between;align-items:center;font-size:20px;font-weight:900;letter-spacing:6px;flex-shrink:0; }
 .product-grid { flex:1;display:grid;grid-template-columns:1fr 1fr;grid-template-rows:repeat(3,1fr);gap:12px;padding:12px;min-height:0; }
 .product-slot { background:white;display:flex;flex-direction:column;overflow:hidden;border-radius:12px;box-shadow:0 2px 8px rgba(0,0,0,0.10); }
 .product-slot.empty { background:white;border-radius:12px; }
@@ -138,7 +163,7 @@ body { background:#e8e8e8;font-family:Arial,sans-serif; }
 .product-img img { width:100%;height:100%;object-fit:contain;display:block; }
 .no-img { width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:80px;background:#f3f4f6; }
 .product-info { padding:16px 18px 18px;flex-shrink:0;border-top:1px solid #f0f0f0; }
-.product-name { font-size:19px;font-weight:800;color:#111;line-height:1.3;text-transform:uppercase;margin-bottom:10px; }
+.product-name { font-size:19px;font-weight:800;color:#111;line-height:1.3;margin-bottom:10px; }
 .price-row { display:flex;justify-content:space-between;align-items:center;margin-bottom:4px; }
 .price-left { display:flex;align-items:center;gap:8px; }
 .orig-price { font-size:15px;color:#999;text-decoration:line-through; }

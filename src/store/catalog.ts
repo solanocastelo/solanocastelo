@@ -10,6 +10,7 @@ interface CatalogStore extends CatalogState {
   toggleProductHidden: (id: string) => void
   toggleFilterNoImage: () => void
   setFilterCategory: (cat: string) => void
+  setFilterType: (type: string) => void
   setSortMode: (mode: 'auto' | 'manual') => void
   reorderPages: (pages: CatalogPage[]) => void
   moveProduct: (productId: string, targetPageIndex: number, targetPosition: number) => void
@@ -37,6 +38,7 @@ export const useCatalogStore = create<CatalogStore>((set, get) => ({
   selectedProductId: null,
   filterNoImage: false,
   filterCategory: '',
+  filterType: '',
   sortMode: 'auto',
 
   setProducts: (products) => {
@@ -63,6 +65,7 @@ export const useCatalogStore = create<CatalogStore>((set, get) => ({
     set(state => ({ filterNoImage: !state.filterNoImage })),
 
   setFilterCategory: (cat) => set({ filterCategory: cat }),
+  setFilterType: (type) => set({ filterType: type }),
   setSortMode: (mode) => set({ sortMode: mode }),
 
   reorderPages: (pages) => set({ pages }),
@@ -96,6 +99,7 @@ export const useCatalogStore = create<CatalogStore>((set, get) => ({
     let filtered = state.products.filter(p => {
       if (state.filterNoImage && !p.hasImage) return false
       if (state.filterCategory && p.category !== state.filterCategory) return false
+      if (state.filterType && p.type !== state.filterType) return false
       return true
     })
     if (state.sortMode === 'auto') {

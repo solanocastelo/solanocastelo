@@ -13,6 +13,7 @@ export interface Product {
   caixaMaster: string
   hasImage: boolean
   imageFileId?: string
+  imageFileIds?: string[]
   imageUrl?: string
   customImageBase64?: string
   cropData?: CropData
@@ -52,5 +53,6 @@ export interface CatalogState {
   selectedProductId: string | null
   filterNoImage: boolean
   filterCategory: string
+  filterType: string
   sortMode: 'auto' | 'manual'
 }
