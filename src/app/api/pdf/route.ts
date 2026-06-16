@@ -34,7 +34,7 @@ export async function POST(req: NextRequest) {
     const page = await browser.newPage()
     await page.setViewport({ width: 1080, height: 1920, deviceScaleFactor: 2 })
     await page.setContent(previewHtml, {
-      waitUntil: 'networkidle2',
+      waitUntil: 'load',
       timeout: 55000,
     })
 
