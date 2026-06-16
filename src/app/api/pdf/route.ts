@@ -1,26 +1,41 @@
 import { NextRequest, NextResponse } from 'next/server'
-import puppeteer from 'puppeteer'
+
+export const maxDuration = 60
 
 export async function POST(req: NextRequest) {
   try {
     const body = await req.json()
     const { previewHtml, campaign } = body
 
-    const browser = await puppeteer.launch({
-      headless: true,
-      args: [
-        '--no-sandbox',
-        '--disable-setuid-sandbox',
-        '--disable-dev-shm-usage',
-        '--disable-gpu',
-      ],
-    })
+    let browser
+
+    if (process.env.VERCEL || process.env.AWS_LAMBDA_FUNCTION_NAME) {
+      const chromium = (await import('@sparticuz/chromium')).default
+      const puppeteer = (await import('puppeteer-core')).default
+      browser = await puppeteer.launch({
+        args: chromium.args,
+        defaultViewport: { width: 1080, height: 1920 },
+        executablePath: await chromium.executablePath(),
+        headless: true,
+      })
+    } else {
+      const puppeteer = (await import('puppeteer')).default
+      browser = await puppeteer.launch({
+        headless: true,
+        args: [
+          '--no-sandbox',
+          '--disable-setuid-sandbox',
+          '--disable-dev-shm-usage',
+          '--disable-gpu',
+        ],
+      })
+    }
 
     const page = await browser.newPage()
     await page.setViewport({ width: 1080, height: 1920, deviceScaleFactor: 2 })
     await page.setContent(previewHtml, {
-      waitUntil: 'networkidle0',
-      timeout: 60000,
+      waitUntil: 'networkidle2',
+      timeout: 55000,
     })
 
     const pdf = await page.pdf({
@@ -45,7 +60,7 @@ export async function POST(req: NextRequest) {
   } catch (error) {
     console.error('PDF generation error:', error)
     return NextResponse.json(
-      { error: 'Falha ao gerar PDF.' },
+      { error: 'Falha ao gerar PDF.', detail: String(error) },
       { status: 500 }
     )
   }

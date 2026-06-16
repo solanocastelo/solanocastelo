@@ -7,7 +7,7 @@ const nextConfig = {
     ],
   },
   experimental: {
-    serverComponentsExternalPackages: ['puppeteer', 'sharp'],
+    serverComponentsExternalPackages: ['puppeteer', 'puppeteer-core', '@sparticuz/chromium', 'sharp'],
   },
 }
 
