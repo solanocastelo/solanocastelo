@@ -49,17 +49,17 @@ export default function ProductCard({ product, compact = false }: Props) {
         {...attributes}
         {...listeners}
       >
-        {/* Photo — square frame, image never distorts */}
-        <div className="relative bg-[#fafafa] flex items-center justify-center p-[6%] flex-shrink-0">
-          <div className="w-full aspect-square bg-[#f4f4f4] flex items-center justify-center overflow-hidden rounded-[5%]">
+        {/* Photo area — square 1:1, image never distorts */}
+        <div className="relative flex-shrink-0 bg-[#fafafa] p-2">
+          <div className="w-full aspect-square bg-[#f4f4f4] rounded overflow-hidden flex items-center justify-center">
             {imageUrl ? (
               <img src={imageUrl} alt={product.name} className="w-full h-full object-contain" />
             ) : (
-              <span className="text-2xl">📦</span>
+              <span className="text-xl">📦</span>
             )}
           </div>
           {hasDiscount && (
-            <div className="absolute top-[8%] left-[8%] bg-[#1faa4d] text-white text-[6px] font-black px-1.5 py-0.5 rounded-[4px] leading-none">
+            <div className="absolute top-3 left-3 bg-[#1faa4d] text-white text-[5.5px] font-black px-1 py-0.5 rounded leading-none">
               {product.discountPercent}% OFF
             </div>
           )}
@@ -73,28 +73,28 @@ export default function ProductCard({ product, compact = false }: Props) {
         </div>
 
         {/* Info */}
-        <div className="flex-1 border-t border-gray-100 px-[6%] py-[5%] flex flex-col gap-[4%] overflow-hidden">
+        <div className="flex-1 border-t border-gray-100 px-2 py-1.5 flex flex-col gap-1 min-h-0 overflow-hidden">
           <p className="text-[7px] font-bold text-[#1f1f1f] leading-tight line-clamp-2">
             {product.name}
           </p>
-          <div className="flex flex-col gap-[2%]">
+          <div className="flex flex-col gap-0.5">
             {hasDiscount && (
-              <span className="text-[6.5px] text-[#9a9a9a] line-through leading-none">
+              <span className="text-[6px] text-[#9a9a9a] line-through leading-none">
                 {product.priceOriginalFormatted}
               </span>
             )}
-            <div className="flex items-baseline leading-none gap-[2px]">
-              <span className="text-[7px] font-bold text-[#161616]">R$</span>
-              <span className="text-[16px] font-black text-[#161616] leading-none tracking-tight">{priceMain.replace('R$','').replace(',','').trim()}</span>
-              <span className="text-[8px] font-bold text-[#161616]">,{priceCents}</span>
+            <div className="flex items-baseline leading-none gap-px">
+              <span className="text-[6.5px] font-bold text-[#161616]">R$</span>
+              <span className="text-[13px] font-black text-[#161616] leading-none tracking-tight">{priceMain.replace('R$','').trim()}</span>
+              <span className="text-[7px] font-bold text-[#161616]">,{priceCents}</span>
             </div>
           </div>
           {product.caixaMaster && (
-            <div className="flex items-center gap-[3px] bg-[#e7effb] text-[#1c3f86] font-semibold text-[5.5px] px-1.5 py-[2px] rounded-full w-fit">
-              📦 Cx. Master {product.caixaMaster} peças
+            <div className="flex items-center gap-1 bg-[#e7effb] text-[#1c3f86] font-semibold text-[5px] px-1.5 py-0.5 rounded-full w-fit">
+              📦 Cx.{product.caixaMaster}pç
             </div>
           )}
-          <div className="flex items-center gap-2 border-t border-gray-100 pt-[4%] text-[6px] text-[#8a8a8a] mt-auto">
+          <div className="flex items-center gap-1.5 border-t border-gray-100 pt-1 text-[5.5px] text-[#8a8a8a] mt-auto">
             <span>Cód. <b className="text-[#444]">{product.code}</b></span>
             {product.reference && <span>Ref. <b className="text-[#444]">{product.reference}</b></span>}
           </div>

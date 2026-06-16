@@ -59,8 +59,8 @@ export default function CatalogPagePreview({ page, pageIndex, campaign }: Props)
       </div>
 
       {/* 2×3 Grid com cards brancos e espaçamento */}
-      <div className="flex-1 grid grid-cols-2 grid-rows-3 gap-1.5 p-1.5 min-h-0">
-        {Array.from({ length: 6 }).map((_, i) => {
+      <div className="flex-1 grid grid-cols-2 grid-rows-2 gap-1.5 p-1.5 min-h-0">
+        {Array.from({ length: 4 }).map((_, i) => {
           const product = page.products[i]
           if (!product) {
             return (

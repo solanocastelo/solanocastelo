@@ -37,7 +37,7 @@ body{font-family:Arial,Helvetica,sans-serif;background:#e8e8e8;}
 .pg{font-size:18px;font-weight:700;background:rgba(255,255,255,.14);padding:8px 18px;border-radius:999px;}
 
 /* GRID */
-.grid{flex:1 1 auto;display:grid;grid-template-columns:repeat(2,1fr);grid-template-rows:repeat(3,1fr);gap:22px;padding:24px;min-height:0;}
+.grid{flex:1 1 auto;display:grid;grid-template-columns:repeat(2,1fr);grid-template-rows:repeat(2,1fr);gap:22px;padding:24px;min-height:0;}
 
 /* CARD */
 .card{background:#fff;border-radius:14px;box-shadow:0 2px 14px rgba(0,0,0,.10);overflow:hidden;display:flex;flex-direction:column;}
@@ -133,7 +133,7 @@ export default function ExportButton() {
       // Product pages
       for (let i = 0; i < pages.length; i++) {
         const page = pages[i]
-        const slots = Array.from({ length: 6 }).map((_, j) => {
+        const slots = Array.from({ length: 4 }).map((_, j) => {
           const p = page.products[j]
           if (!p) return `<div class="card" style="background:#f9f9f9;border-radius:14px;"></div>`
 

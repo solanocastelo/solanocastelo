@@ -33,10 +33,10 @@ export function autoSortProducts(products: Product[]): Product[] {
 export function buildPages(products: Product[]): CatalogPage[] {
   const visible = products.filter(p => !p.hidden)
   const pages: CatalogPage[] = []
-  for (let i = 0; i < visible.length; i += 6) {
+  for (let i = 0; i < visible.length; i += 4) {
     pages.push({
-      id: `page-${Math.floor(i / 6) + 1}`,
-      products: visible.slice(i, i + 6),
+      id: `page-${Math.floor(i / 4) + 1}`,
+      products: visible.slice(i, i + 4),
     })
   }
   return pages

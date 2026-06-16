@@ -13,7 +13,7 @@
 
 @layer utilities {
   .catalog-page {
-    width: 360px;
+    width: 270px;
     aspect-ratio: 9 / 16;
     background: white;
     position: relative;
