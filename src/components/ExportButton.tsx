@@ -187,7 +187,7 @@ export default function ExportButton() {
 
           const imgSrc = p.customImageBase64
             ? p.customImageBase64
-            : p.imageFileId ? `/api/drive/${p.imageFileId}` : null
+            : p.imageFileId ? `/api/drive/${p.imageFileId}?w=600&q=72` : null
           const imgHtml = imgSrc
             ? `<img src="${imgSrc}" alt="" loading="eager" />`
             : `<span class="ph">Foto do produto</span>`
