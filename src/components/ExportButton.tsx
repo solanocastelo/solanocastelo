@@ -36,31 +36,30 @@ body{font-family:Arial,Helvetica,sans-serif;background:#e8e8e8;}
 .sub{font-size:16px;font-weight:500;opacity:.9;}
 .pg{font-size:18px;font-weight:700;background:rgba(255,255,255,.14);padding:8px 18px;border-radius:999px;}
 
-/* GRID */
-.grid{flex:1 1 auto;display:grid;grid-template-columns:repeat(2,1fr);grid-template-rows:repeat(2,1fr);gap:22px;padding:24px;min-height:0;}
+/* GRID — explicit pixel size to avoid html2canvas flex bugs */
+.grid{width:1080px;height:1626px;display:grid;grid-template-columns:505px 505px;grid-template-rows:802px 802px;gap:22px;padding:24px;}
 
-/* CARD */
-.card{background:#fff;border-radius:14px;box-shadow:0 2px 14px rgba(0,0,0,.10);overflow:hidden;display:flex;flex-direction:column;}
+/* CARD — explicit pixel sizes */
+.card{width:505px;height:802px;background:#fff;border-radius:14px;box-shadow:0 2px 14px rgba(0,0,0,.10);overflow:hidden;}
 
-/* PHOTO — padding-bottom trick: html2canvas does not support aspect-ratio */
-.photo{position:relative;background:#fafafa;padding:14px;flex:0 0 auto;}
-.frame-wrap{position:relative;width:100%;padding-bottom:100%;}
-.frame{position:absolute;inset:0;background:#f4f4f4;display:flex;align-items:center;justify-content:center;overflow:hidden;border-radius:8px;}
-.frame img{width:100%;height:100%;object-fit:contain;}
+/* PHOTO — explicit 477×477 square, no flex tricks */
+.photo{position:relative;width:505px;height:505px;background:#fafafa;padding:14px;}
+.frame{width:477px;height:477px;background:#f4f4f4;display:flex;align-items:center;justify-content:center;overflow:hidden;border-radius:8px;}
+.frame img{width:477px;height:477px;object-fit:contain;}
 .no-photo{font-size:60px;}
-.badge{position:absolute;top:12px;left:12px;background:#1faa4d;color:#fff;font-size:12px;font-weight:800;padding:5px 10px;border-radius:7px;z-index:1;}
+.badge{position:absolute;top:20px;left:20px;background:#1faa4d;color:#fff;font-size:12px;font-weight:800;padding:5px 10px;border-radius:7px;}
 
-/* INFO */
-.info{flex:1;border-top:1px solid #ececec;padding:14px 16px 15px;display:flex;flex-direction:column;gap:9px;overflow:hidden;}
-.name{font-weight:700;font-size:14px;line-height:1.25;color:#1f1f1f;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
+/* INFO — explicit 297px height */
+.info{width:505px;height:297px;border-top:1px solid #ececec;padding:16px 18px;display:flex;flex-direction:column;gap:10px;overflow:hidden;}
+.name{font-weight:700;font-size:15px;line-height:1.25;color:#1f1f1f;max-height:38px;overflow:hidden;}
 .price{display:flex;flex-direction:column;gap:2px;}
-.was{font-size:12px;color:#9a9a9a;text-decoration:line-through;}
+.was{font-size:13px;color:#9a9a9a;text-decoration:line-through;}
 .now{display:flex;align-items:baseline;color:#161616;line-height:1;gap:3px;}
-.cur{font-size:15px;font-weight:700;}
-.int{font-size:34px;font-weight:800;letter-spacing:-1px;}
-.dec{font-size:16px;font-weight:700;}
-.pill{display:inline-flex;align-items:center;gap:6px;background:#e7effb;color:#1c3f86;font-weight:600;font-size:11px;padding:4px 10px;border-radius:999px;width:fit-content;}
-.meta{display:flex;align-items:center;gap:12px;border-top:1px solid #eee;padding-top:8px;font-size:11px;color:#8a8a8a;}
+.cur{font-size:16px;font-weight:700;}
+.int{font-size:38px;font-weight:800;letter-spacing:-1px;}
+.dec{font-size:18px;font-weight:700;}
+.pill{display:inline-flex;align-items:center;gap:6px;background:#e7effb;color:#1c3f86;font-weight:600;font-size:12px;padding:5px 12px;border-radius:999px;}
+.meta{display:flex;align-items:center;gap:14px;border-top:1px solid #eee;padding-top:10px;font-size:12px;color:#8a8a8a;margin-top:auto;}
 .meta b{color:#444;font-weight:700;}
 
 /* FOOTER */
@@ -150,9 +149,7 @@ export default function ExportButton() {
           return `
             <div class="card">
               <div class="photo">
-                <div class="frame-wrap">
-                  <div class="frame">${imgHtml}</div>
-                </div>
+                <div class="frame">${imgHtml}</div>
                 ${p.discountPercent > 0 ? `<div class="badge">${p.discountPercent}% OFF</div>` : ''}
               </div>
               <div class="info">
