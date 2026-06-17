@@ -2,19 +2,6 @@
 import { useState } from 'react'
 import { useCatalogStore } from '@/store/catalog'
 
-async function fetchBase64(url: string): Promise<string | null> {
-  try {
-    const res = await fetch(url)
-    if (!res.ok) return null
-    const blob = await res.blob()
-    return new Promise(resolve => {
-      const reader = new FileReader()
-      reader.onloadend = () => resolve(reader.result as string)
-      reader.readAsDataURL(blob)
-    })
-  } catch { return null }
-}
-
 function formatDate(d: string): string {
   if (!d) return ''
   const [y, m, day] = d.split('-')
@@ -156,20 +143,9 @@ export default function ExportButton() {
     setLoading(true)
     setProgress(0)
     try {
-      // Pre-fetch Drive images as base64 so they render in the print document
-      const allProducts = pages.flatMap(p => p.products)
-      const toFetch = allProducts.filter(p => p.imageFileId && !p.customImageBase64)
-      const imageCache: Record<string, string> = {}
-      let done = 0
-      await Promise.all(
-        toFetch.map(async p => {
-          const b64 = await fetchBase64(`/api/drive/${p.imageFileId}`)
-          if (b64) imageCache[p.imageFileId!] = b64
-          done++
-          setProgress(Math.round((done / Math.max(1, toFetch.length)) * 100))
-        })
-      )
-
+      // The print iframe is same-origin, so Drive images can be loaded
+      // directly via the proxy URL — no need to inline base64 (which would
+      // create a huge document and crash the browser on large catalogs).
       const validity =
         campaign.validityFrom && campaign.validityTo
           ? `De ${formatDate(campaign.validityFrom)} a ${formatDate(campaign.validityTo)}`
@@ -209,9 +185,11 @@ export default function ExportButton() {
           const p = page.products[j]
           if (!p) return `<div class="card" style="background:#f9f9f9;box-shadow:none;"></div>`
 
-          const imgSrc = p.customImageBase64 || (p.imageFileId && imageCache[p.imageFileId]) || null
+          const imgSrc = p.customImageBase64
+            ? p.customImageBase64
+            : p.imageFileId ? `/api/drive/${p.imageFileId}` : null
           const imgHtml = imgSrc
-            ? `<img src="${imgSrc}" alt="" />`
+            ? `<img src="${imgSrc}" alt="" loading="eager" />`
             : `<span class="ph">Foto do produto</span>`
 
           const priceMatch = p.priceFormatted.match(/^R?\$?\s*([\d.]+)[,.](\d{2})$/)
@@ -275,20 +253,27 @@ export default function ExportButton() {
       idoc.write(docHtml)
       idoc.close()
 
-      // Wait for all images inside the iframe to load
+      // Wait for all images inside the iframe to load (via the same-origin proxy)
       await new Promise<void>(resolve => {
         const imgs = Array.from(idoc.images || [])
-        if (imgs.length === 0) { resolve(); return }
+        const total = imgs.length
+        if (total === 0) { setProgress(100); resolve(); return }
         let loaded = 0
-        const check = () => { if (++loaded >= imgs.length) resolve() }
+        let settled = false
+        const finish = () => { if (!settled) { settled = true; resolve() } }
+        const check = () => {
+          loaded++
+          setProgress(Math.round((loaded / total) * 100))
+          if (loaded >= total) finish()
+        }
         imgs.forEach(img => {
           if (img.complete) check()
           else { img.onload = check; img.onerror = check }
         })
-        // Safety timeout
-        setTimeout(resolve, 8000)
+        // Safety timeout — proceed to print even if some images are slow (30s)
+        setTimeout(finish, 30000)
       })
-      await new Promise(r => setTimeout(r, 150))
+      await new Promise(r => setTimeout(r, 200))
 
       const win = iframe.contentWindow
       if (win) {
@@ -310,7 +295,8 @@ export default function ExportButton() {
         cleanup()
       }
     } catch (err) {
-      alert('Erro ao gerar PDF. Verifica o console para mais detalhes.')
+      const msg = err instanceof Error ? err.message : String(err)
+      alert(`Erro ao gerar PDF:\n${msg}`)
       console.error(err)
     } finally {
       setLoading(false)
@@ -327,7 +313,7 @@ export default function ExportButton() {
       {loading ? (
         <>
           <span className="animate-spin inline-block">⏳</span>
-          {progress > 0 ? `A preparar imagens... ${progress}%` : 'A preparar...'}
+          {progress > 0 ? `A carregar imagens... ${progress}%` : 'A preparar...'}
         </>
       ) : (
         <>
