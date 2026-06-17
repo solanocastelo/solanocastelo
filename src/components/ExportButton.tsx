@@ -170,7 +170,7 @@ export default function ExportButton() {
         allPageHtmls.push(`
           <div class="page">
             <header class="page-header">
-              <div class="brand"><b>CASA FREITAS</b><span class="sep"></span><span class="sub">Encarte B2B</span></div>
+              <div class="brand"><b>CASA FREITAS</b><span class="sep"></span><span class="sub">Encarte de Ofertas B2B</span></div>
               <div class="pg">Pg. ${i + 1} / ${pages.length}</div>
             </header>
             <div class="grid">${slots}</div>

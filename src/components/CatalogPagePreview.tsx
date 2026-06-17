@@ -53,9 +53,15 @@ export default function CatalogPagePreview({ page, pageIndex, campaign }: Props)
   return (
     <div className="catalog-page" id={`catalog-page-${pageIndex}`} style={{ background: '#e8e8e8' }}>
       {/* Header */}
-      <div className="bg-[#312783] text-white px-3 py-1.5 flex items-center justify-between flex-shrink-0">
-        <span className="text-[9px] font-black tracking-widest uppercase">Casa Freitas</span>
-        <span className="text-[8px] text-white/50">Pg. {pageIndex + 1}</span>
+      <div className="bg-[#312783] text-white px-3 py-2 flex items-center justify-between flex-shrink-0 gap-2">
+        <div className="flex items-center gap-1.5 min-w-0">
+          <span className="text-[9px] font-black tracking-wide uppercase whitespace-nowrap">Casa Freitas</span>
+          <span className="w-px h-3 bg-white/30 flex-shrink-0" />
+          <span className="text-[7px] text-white/70 truncate">Encarte de Ofertas B2B</span>
+        </div>
+        <span className="text-[7px] font-bold bg-white/15 px-1.5 py-0.5 rounded-full whitespace-nowrap flex-shrink-0">
+          Pg. {pageIndex + 1}
+        </span>
       </div>
 
       {/* 2×3 Grid com cards brancos e espaçamento */}
