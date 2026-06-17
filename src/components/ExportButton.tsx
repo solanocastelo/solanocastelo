@@ -22,52 +22,128 @@ function formatDate(d: string): string {
   return `${parseInt(day)} de ${months[parseInt(m) - 1]} de ${y}`
 }
 
-const PAGE_CSS = `
-*{box-sizing:border-box;margin:0;padding:0;}
-body{font-family:Arial,Helvetica,sans-serif;background:#e8e8e8;}
-.page{width:1080px;height:1920px;display:flex;flex-direction:column;overflow:hidden;background:#e8e8e8;}
-.cover-page{background:#312783;}
+function escapeHtml(s: string): string {
+  return (s || '')
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+}
 
-/* HEADER */
-.page-header{flex:none;height:96px;padding:0 36px;display:flex;align-items:center;justify-content:space-between;background:#312783;color:#fff;}
-.brand{display:flex;align-items:center;gap:16px;}
-.brand b{font-size:30px;font-weight:800;letter-spacing:.02em;}
-.sep{width:1px;height:30px;background:rgba(255,255,255,.35);}
-.sub{font-size:16px;font-weight:500;opacity:.9;}
-.pg{font-size:18px;font-weight:700;background:rgba(255,255,255,.14);padding:8px 18px;border-radius:999px;}
+const BOX_ICON = '<svg viewBox="0 0 24 24" fill="none" stroke="#1c3f86" stroke-width="2" stroke-linejoin="round"><path d="M3 7l9-4 9 4v10l-9 4-9-4z"/><path d="M3 7l9 4 9-4M12 11v10"/></svg>'
 
-/* GRID */
-.grid{width:1080px;height:1626px;display:grid;grid-template-columns:repeat(2,1fr);grid-auto-rows:auto;align-items:start;align-content:space-evenly;gap:30px;padding:34px;}
+const DOC_CSS = `
+  :root{
+    --primary:#312783;
+    --footer-bg:#1d1d1f;
+    --page-bg:#e8e8e8;
+    --card-bg:#ffffff;
+    --discount:#1faa4d;
+    --pill-bg:#e7effb;
+    --pill-fg:#1c3f86;
+    --ink:#1f1f1f;
+    --muted:#8a8a8a;
+    --line:#ececec;
+    --font:Arial, Helvetica, sans-serif;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;}
+  body{font-family:var(--font); background:#fff; color:var(--ink);}
 
-/* CARD */
-.card{background:#fff;border-radius:14px;box-shadow:0 2px 14px rgba(0,0,0,.10);overflow:hidden;}
+  .pages{display:flex; flex-direction:column; align-items:center;}
+  .page{
+    width:1080px; height:1920px;
+    background:var(--page-bg);
+    display:flex; flex-direction:column;
+    overflow:hidden;
+  }
+  .cover-page{background:var(--primary); position:relative;}
 
-/* PHOTO */
-.photo{position:relative;background:#fafafa;padding:14px;}
-.frame{aspect-ratio:1/1;background:#f4f4f4;border-radius:8px;overflow:hidden;display:flex;align-items:center;justify-content:center;}
-.frame img{width:100%;height:100%;object-fit:contain;}
-.no-photo{font-size:60px;}
-.badge{position:absolute;top:20px;left:20px;background:#1faa4d;color:#fff;font-size:12px;font-weight:800;padding:5px 10px;border-radius:7px;}
+  .page-header{
+    flex:none; height:96px; padding:0 36px;
+    display:flex; align-items:center; justify-content:space-between;
+    background:var(--primary); color:#fff;
+  }
+  .page-header .brand{display:flex; align-items:center; gap:16px;}
+  .page-header .brand b{font-size:30px; font-weight:800; letter-spacing:.02em;}
+  .page-header .sep{width:1px; height:30px; background:rgba(255,255,255,.35);}
+  .page-header .sub{font-size:16px; font-weight:500; opacity:.9;}
+  .page-header .pg{font-size:18px; font-weight:700; background:rgba(255,255,255,.14); padding:8px 18px; border-radius:999px;}
 
-/* INFO */
-.info{border-top:1px solid #ececec;padding:16px 18px;display:flex;flex-direction:column;gap:10px;}
-.name{font-weight:700;font-size:15px;line-height:1.25;color:#1f1f1f;max-height:38px;overflow:hidden;}
-.price{display:flex;flex-direction:column;gap:2px;}
-.was{font-size:13px;color:#9a9a9a;text-decoration:line-through;}
-.now{display:flex;align-items:baseline;color:#161616;line-height:1;gap:3px;}
-.cur{font-size:16px;font-weight:700;}
-.int{font-size:38px;font-weight:800;letter-spacing:-1px;}
-.dec{font-size:18px;font-weight:700;}
-.pill{align-self:flex-start;width:fit-content;white-space:nowrap;display:inline-flex;align-items:center;gap:7px;background:#e7effb;color:#1c3f86;font-weight:600;font-size:12px;padding:5px 12px;border-radius:999px;}
-.meta{display:flex;align-items:center;gap:14px;border-top:1px solid #eee;padding-top:10px;font-size:12px;color:#8a8a8a;margin-top:auto;}
-.meta b{color:#444;font-weight:700;}
+  .grid{
+    flex:1 1 auto; display:grid; grid-template-columns:repeat(2,1fr);
+    grid-auto-rows:auto; align-items:start; align-content:space-evenly;
+    gap:30px; padding:34px; min-height:0;
+  }
 
-/* FOOTER */
-.page-footer{flex:none;height:150px;padding:0 40px;display:flex;align-items:center;justify-content:space-between;gap:24px;background:#1d1d1f;color:#fff;}
-.fcol{display:flex;flex-direction:column;gap:5px;}
-.flbl{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:#9a9a9c;}
-.fval{font-size:16px;font-weight:700;}
-.fsep{width:1px;height:64px;background:rgba(255,255,255,.14);}
+  .card{
+    background:var(--card-bg); border-radius:14px;
+    box-shadow:0 2px 14px rgba(0,0,0,.10);
+    overflow:hidden; display:flex; flex-direction:column;
+  }
+
+  .photo{
+    position:relative; background:#fafafa;
+    display:flex; align-items:center; justify-content:center;
+    width:100%; aspect-ratio:1 / 1;
+  }
+  .photo .frame{
+    width:100%; height:100%; aspect-ratio:1 / 1; border-radius:8px;
+    background-color:#f4f4f4;
+    background-image:repeating-linear-gradient(45deg,#ececec 0 12px,#f7f7f7 12px 24px);
+    display:flex; align-items:center; justify-content:center; overflow:hidden;
+  }
+  .photo .frame .ph{font-family:'SF Mono',Menlo,Consolas,monospace; font-size:13px; color:#a4a4a4; letter-spacing:.06em; text-transform:uppercase;}
+  .photo img{width:100%; height:100%; object-fit:contain;}
+
+  .badge{
+    position:absolute; top:16px; left:16px;
+    background:var(--discount); color:#fff;
+    font-size:14px; font-weight:800; padding:7px 13px; border-radius:9px;
+    box-shadow:0 2px 6px rgba(31,170,77,.35);
+  }
+
+  .info{border-top:1px solid var(--line); display:flex; flex-direction:column; padding:18px 20px 20px; gap:13px;}
+  .name{
+    font-weight:700; line-height:1.3; color:var(--ink); font-size:17px; min-height:43px;
+    display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden;
+    word-break:break-word; overflow-wrap:break-word;
+  }
+  .price{display:flex; flex-direction:column; gap:2px;}
+  .price .was{color:#9a9a9a; text-decoration:line-through; font-size:13px;}
+  .price .now{display:flex; align-items:baseline; color:#161616; line-height:1;}
+  .price .now .cur{font-weight:700; margin-right:5px; font-size:18px;}
+  .price .now .int{font-weight:800; letter-spacing:-1.5px; font-size:44px;}
+  .price .now .dec{font-weight:700; font-size:19px;}
+
+  .pill{
+    align-self:flex-start; width:fit-content; max-width:100%;
+    display:inline-flex; align-items:center; gap:7px; white-space:nowrap;
+    background:var(--pill-bg); color:var(--pill-fg); font-weight:600; border-radius:999px;
+    font-size:12.5px; padding:5px 12px;
+  }
+  .pill svg{width:14px; height:14px; flex:none;}
+
+  .meta{display:flex; align-items:center; gap:18px; border-top:1px solid #eee; padding-top:11px; font-size:12px; color:var(--muted);}
+  .meta b{color:#444; font-weight:700;}
+
+  .page-footer{
+    flex:none; height:150px; padding:0 40px;
+    display:flex; align-items:center; justify-content:space-between; gap:24px;
+    background:var(--footer-bg); color:#fff;
+  }
+  .page-footer .col{display:flex; flex-direction:column; gap:5px;}
+  .page-footer .lbl{font-size:11px; letter-spacing:.12em; text-transform:uppercase; color:#9a9a9c;}
+  .page-footer .val{font-size:18px; font-weight:700;}
+  .page-footer .vsep{width:1px; height:64px; background:rgba(255,255,255,.14);}
+
+  @page{ size:1080px 1920px; margin:0; }
+  @media print{
+    html,body{background:#fff;}
+    .pages{padding:0;}
+    .page{ box-shadow:none; page-break-after:always; break-after:page; }
+    .page:last-child{page-break-after:auto; break-after:auto;}
+  }
 `
 
 export default function ExportButton() {
@@ -80,21 +156,18 @@ export default function ExportButton() {
     setLoading(true)
     setProgress(0)
     try {
-      const [{ default: jsPDF }, { default: html2canvas }] = await Promise.all([
-        import('jspdf'),
-        import('html2canvas'),
-      ])
-
-      // Pre-fetch Drive images as base64
+      // Pre-fetch Drive images as base64 so they render in the print document
       const allProducts = pages.flatMap(p => p.products)
+      const toFetch = allProducts.filter(p => p.imageFileId && !p.customImageBase64)
       const imageCache: Record<string, string> = {}
+      let done = 0
       await Promise.all(
-        allProducts
-          .filter(p => p.imageFileId && !p.customImageBase64)
-          .map(async p => {
-            const b64 = await fetchBase64(`/api/drive/${p.imageFileId}`)
-            if (b64) imageCache[p.imageFileId!] = b64
-          })
+        toFetch.map(async p => {
+          const b64 = await fetchBase64(`/api/drive/${p.imageFileId}`)
+          if (b64) imageCache[p.imageFileId!] = b64
+          done++
+          setProgress(Math.round((done / Math.max(1, toFetch.length)) * 100))
+        })
       )
 
       const validity =
@@ -102,49 +175,52 @@ export default function ExportButton() {
           ? `De ${formatDate(campaign.validityFrom)} a ${formatDate(campaign.validityTo)}`
           : campaign.validityFrom ? `A partir de ${formatDate(campaign.validityFrom)}` : ''
 
-      const footerCols = [
+      const footerCols: [string, string][] = [
         ['Pagamento', campaign.paymentTerms],
         ['Pedido Mínimo', campaign.minimumOrder],
-        ...(validity ? [['Validade', validity]] : []),
+        ...(validity ? [['Validade', validity] as [string, string]] : []),
         ['Praça', campaign.plaza],
         ['Contato', campaign.commercialEmail],
       ]
-
       const footerHtml = footerCols.map(([l, v], i) => `
-        ${i ? '<div class="fsep"></div>' : ''}
-        <div class="fcol"><div class="flbl">${l}</div><div class="fval">${v}</div></div>
+        ${i ? '<div class="vsep"></div>' : ''}
+        <div class="col"><div class="lbl">${escapeHtml(l)}</div><div class="val">${escapeHtml(v)}</div></div>
       `).join('')
 
-      // Build page HTML strings
-      const allPageHtmls: string[] = []
+      const totalPages = pages.length + (campaign.coverImageBase64 ? 1 : 0)
+      const pageHtmls: string[] = []
 
-      // Cover
+      // Cover page
       if (campaign.coverImageBase64) {
-        allPageHtmls.push(`
-          <div class="page cover-page" style="position:relative;">
+        pageHtmls.push(`
+          <div class="page cover-page">
             <img src="${campaign.coverImageBase64}" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;" />
             <div style="position:absolute;bottom:0;left:0;right:0;background:linear-gradient(to top,rgba(13,31,51,0.9),transparent);padding:60px 50px 50px;">
-              <h1 style="color:white;font-size:52px;font-weight:700;line-height:1.2;">${campaign.title}</h1>
-              <p style="color:rgba(255,255,255,0.6);font-size:26px;margin-top:12px;">${campaign.plaza}</p>
+              <h1 style="color:#fff;font-size:52px;font-weight:700;line-height:1.2;margin:0;">${escapeHtml(campaign.title)}</h1>
+              <p style="color:rgba(255,255,255,0.6);font-size:26px;margin:12px 0 0;">${escapeHtml(campaign.plaza)}</p>
             </div>
           </div>`)
       }
 
-      // Product pages
+      // Product pages — 4 per page
       for (let i = 0; i < pages.length; i++) {
         const page = pages[i]
-        const slots = Array.from({ length: 4 }).map((_, j) => {
+        const cards = Array.from({ length: 4 }).map((_, j) => {
           const p = page.products[j]
-          if (!p) return `<div class="card" style="background:#f9f9f9;border-radius:14px;"></div>`
+          if (!p) return `<div class="card" style="background:#f9f9f9;box-shadow:none;"></div>`
 
           const imgSrc = p.customImageBase64 || (p.imageFileId && imageCache[p.imageFileId]) || null
           const imgHtml = imgSrc
             ? `<img src="${imgSrc}" alt="" />`
-            : `<span class="no-photo">📦</span>`
+            : `<span class="ph">Foto do produto</span>`
 
           const priceMatch = p.priceFormatted.match(/^R?\$?\s*([\d.]+)[,.](\d{2})$/)
-          const int = priceMatch ? priceMatch[1] : p.priceFormatted.replace('R$','').trim()
-          const dec = priceMatch ? priceMatch[2] : ''
+          const int = priceMatch ? priceMatch[1] : p.priceFormatted.replace('R$', '').trim()
+          const dec = priceMatch ? priceMatch[2] : '00'
+
+          const pill = p.caixaMaster
+            ? `<div class="pill">${BOX_ICON} Caixa Master ${escapeHtml(p.caixaMaster)} peças</div>`
+            : ''
 
           return `
             <div class="card">
@@ -153,67 +229,86 @@ export default function ExportButton() {
                 ${p.discountPercent > 0 ? `<div class="badge">${p.discountPercent}% OFF</div>` : ''}
               </div>
               <div class="info">
-                <div class="name">${p.name}</div>
+                <div class="name">${escapeHtml(p.name)}</div>
                 <div class="price">
-                  ${p.discountPercent > 0 ? `<span class="was">${p.priceOriginalFormatted}</span>` : ''}
+                  ${p.discountPercent > 0 ? `<span class="was">${escapeHtml(p.priceOriginalFormatted)}</span>` : ''}
                   <div class="now"><span class="cur">R$</span><span class="int">${int}</span><span class="dec">,${dec}</span></div>
                 </div>
-                ${p.caixaMaster ? `<div class="pill">📦 Cx. Master ${p.caixaMaster} peças</div>` : ''}
-                <div class="meta"><span>Cód. <b>${p.code}</b></span><span>Ref. <b>${p.reference}</b></span></div>
+                ${pill}
+                <div class="meta"><span>Cód. <b>${escapeHtml(p.code)}</b></span><span>Ref. <b>${escapeHtml(p.reference)}</b></span></div>
               </div>
             </div>`
         }).join('')
 
-        allPageHtmls.push(`
+        const pageNum = i + 1 + (campaign.coverImageBase64 ? 1 : 0)
+        pageHtmls.push(`
           <div class="page">
             <header class="page-header">
               <div class="brand"><b>CASA FREITAS</b><span class="sep"></span><span class="sub">Encarte de Ofertas B2B</span></div>
-              <div class="pg">Pg. ${i + 1} / ${pages.length}</div>
+              <div class="pg">Pg. ${pageNum} / ${totalPages}</div>
             </header>
-            <div class="grid">${slots}</div>
+            <div class="grid">${cards}</div>
             <footer class="page-footer">${footerHtml}</footer>
           </div>`)
       }
 
-      const pdf = new jsPDF({ orientation: 'portrait', unit: 'px', format: [1080, 1920] })
+      const docHtml = `<!DOCTYPE html>
+        <html lang="pt-BR">
+        <head>
+          <meta charset="UTF-8">
+          <title>${escapeHtml(campaign.title || 'Encarte Casa Freitas')}</title>
+          <style>${DOC_CSS}</style>
+        </head>
+        <body>
+          <div class="pages">${pageHtmls.join('')}</div>
+        </body>
+        </html>`
 
-      const container = document.createElement('div')
-      container.style.cssText = 'position:fixed;top:-9999px;left:-9999px;width:1080px;height:1920px;overflow:hidden;z-index:-1;'
-      const styleEl = document.createElement('style')
-      styleEl.textContent = PAGE_CSS
-      container.appendChild(styleEl)
-      const inner = document.createElement('div')
-      container.appendChild(inner)
-      document.body.appendChild(container)
+      // Render into a hidden iframe and trigger the browser's native print dialog
+      const iframe = document.createElement('iframe')
+      iframe.style.cssText = 'position:fixed;right:0;bottom:0;width:0;height:0;border:0;'
+      document.body.appendChild(iframe)
 
-      for (let i = 0; i < allPageHtmls.length; i++) {
-        inner.innerHTML = allPageHtmls[i]
-        await Promise.all(
-          Array.from(inner.querySelectorAll('img')).map(img => {
-            const el = img as HTMLImageElement
-            if (el.complete) return Promise.resolve()
-            return new Promise<void>(r => { el.onload = () => r(); el.onerror = () => r() })
-          })
-        )
-        await new Promise(r => setTimeout(r, 80))
+      const idoc = iframe.contentDocument || iframe.contentWindow?.document
+      if (!idoc) throw new Error('Não foi possível criar o documento de impressão.')
+      idoc.open()
+      idoc.write(docHtml)
+      idoc.close()
 
-        const canvas = await html2canvas(inner.firstElementChild as HTMLElement, {
-          scale: 1,
-          useCORS: true,
-          allowTaint: true,
-          width: 1080,
-          height: 1920,
-          backgroundColor: '#e8e8e8',
-          logging: false,
+      // Wait for all images inside the iframe to load
+      await new Promise<void>(resolve => {
+        const imgs = Array.from(idoc.images || [])
+        if (imgs.length === 0) { resolve(); return }
+        let loaded = 0
+        const check = () => { if (++loaded >= imgs.length) resolve() }
+        imgs.forEach(img => {
+          if (img.complete) check()
+          else { img.onload = check; img.onerror = check }
         })
+        // Safety timeout
+        setTimeout(resolve, 8000)
+      })
+      await new Promise(r => setTimeout(r, 150))
 
-        if (i > 0) pdf.addPage([1080, 1920], 'portrait')
-        pdf.addImage(canvas.toDataURL('image/jpeg', 0.60), 'JPEG', 0, 0, 1080, 1920)
-        setProgress(Math.round(((i + 1) / allPageHtmls.length) * 100))
+      const win = iframe.contentWindow
+      if (win) {
+        win.focus()
+        win.print()
       }
 
-      document.body.removeChild(container)
-      pdf.save(`encarte-${campaign.title.replace(/\s+/g, '-').toLowerCase()}.pdf`)
+      // Clean up after the print dialog closes
+      const cleanup = () => {
+        setTimeout(() => {
+          if (iframe.parentNode) iframe.parentNode.removeChild(iframe)
+        }, 500)
+      }
+      if (win) {
+        win.onafterprint = cleanup
+        // Fallback in case onafterprint never fires
+        setTimeout(cleanup, 60000)
+      } else {
+        cleanup()
+      }
     } catch (err) {
       alert('Erro ao gerar PDF. Verifica o console para mais detalhes.')
       console.error(err)
@@ -232,14 +327,14 @@ export default function ExportButton() {
       {loading ? (
         <>
           <span className="animate-spin inline-block">⏳</span>
-          {progress > 0 ? `A gerar PDF... ${progress}%` : 'A preparar...'}
+          {progress > 0 ? `A preparar imagens... ${progress}%` : 'A preparar...'}
         </>
       ) : (
         <>
-          📄 Exportar PDF
+          🖨️ Imprimir / PDF
           {pages.length > 0 && (
             <span className="bg-white/20 text-xs px-2 py-0.5 rounded-full">
-              {pages.length + 1} pág.
+              {pages.length + (campaign.coverImageBase64 ? 1 : 0)} pág.
             </span>
           )}
         </>
