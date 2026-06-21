@@ -49,7 +49,7 @@ async function toWhiteJpeg(url: string): Promise<string> {
 
 const DOC_CSS = `
   :root{
-    --primary:#312783;
+    --primary:#002d96;
     --footer-bg:#002d96;
     --page-bg:#003dac;
     --card-bg:#ffffff;
