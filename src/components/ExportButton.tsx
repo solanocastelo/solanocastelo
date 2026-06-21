@@ -19,6 +19,34 @@ function escapeHtml(s: string): string {
 
 const BOX_ICON = '<svg viewBox="0 0 24 24" fill="none" stroke="#1c3f86" stroke-width="2" stroke-linejoin="round"><path d="M3 7l9-4 9 4v10l-9 4-9-4z"/><path d="M3 7l9 4 9-4M12 11v10"/></svg>'
 
+// Loads an image and re-encodes it as a JPEG with a solid white background.
+// JPEG has no alpha channel, so transparent PNG pixels are composited onto
+// white here — guaranteeing a 100% white background in the exported PDF
+// regardless of server-side image processing.
+async function toWhiteJpeg(url: string): Promise<string> {
+  return new Promise(resolve => {
+    const img = new Image()
+    img.crossOrigin = 'anonymous'
+    img.onload = () => {
+      try {
+        const canvas = document.createElement('canvas')
+        canvas.width = img.naturalWidth || 600
+        canvas.height = img.naturalHeight || 600
+        const ctx = canvas.getContext('2d')
+        if (!ctx) { resolve(url); return }
+        ctx.fillStyle = '#ffffff'
+        ctx.fillRect(0, 0, canvas.width, canvas.height)
+        ctx.drawImage(img, 0, 0, canvas.width, canvas.height)
+        resolve(canvas.toDataURL('image/jpeg', 0.82))
+      } catch {
+        resolve(url) // tainted canvas or other failure — fall back to original
+      }
+    }
+    img.onerror = () => resolve(url)
+    img.src = url
+  })
+}
+
 const DOC_CSS = `
   :root{
     --primary:#312783;
@@ -185,6 +213,24 @@ export default function ExportButton() {
           </div>`)
       }
 
+      // Pre-convert every product image to a white-background JPEG so
+      // transparent PNGs never render with a black background in the PDF.
+      const allProducts = pages.flatMap(pg => pg.products)
+      const imageMap = new Map<string, string>()
+      const toConvert = allProducts
+        .filter(p => !p.customImageBase64 && p.imageFileId)
+        .map(p => p.imageFileId as string)
+      const uniqueIds = Array.from(new Set(toConvert))
+      let converted = 0
+      await Promise.all(
+        uniqueIds.map(async id => {
+          const jpeg = await toWhiteJpeg(`/api/drive/${id}?w=600&q=72`)
+          imageMap.set(id, jpeg)
+          converted++
+          setProgress(Math.round((converted / uniqueIds.length) * 100))
+        })
+      )
+
       // Product pages — 4 per page
       for (let i = 0; i < pages.length; i++) {
         const page = pages[i]
@@ -194,7 +240,7 @@ export default function ExportButton() {
 
           const imgSrc = p.customImageBase64
             ? p.customImageBase64
-            : p.imageFileId ? `/api/drive/${p.imageFileId}?w=600&q=72` : null
+            : p.imageFileId ? (imageMap.get(p.imageFileId) || `/api/drive/${p.imageFileId}?w=600&q=72`) : null
           const imgHtml = imgSrc
             ? `<img src="${imgSrc}" alt="" loading="eager" />`
             : `<span class="ph">Foto do produto</span>`
