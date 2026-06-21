@@ -51,7 +51,7 @@ export default function CatalogPagePreview({ page, pageIndex, campaign }: Props)
   const validity = formatValidity(campaign.validityFrom, campaign.validityTo)
 
   return (
-    <div className="catalog-page" id={`catalog-page-${pageIndex}`} style={{ background: '#00b6f7' }}>
+    <div className="catalog-page" id={`catalog-page-${pageIndex}`} style={{ background: '#003dac' }}>
       {/* Header */}
       <div className="bg-[#312783] text-white px-3 py-2 flex items-center justify-between flex-shrink-0 gap-2">
         <div className="flex items-center gap-1.5 min-w-0">
@@ -98,7 +98,7 @@ export default function CatalogPagePreview({ page, pageIndex, campaign }: Props)
       </div>
 
       {/* Footer */}
-      <div className="bg-[#312783] text-white px-4 py-2 flex-shrink-0 flex items-center justify-between gap-3">
+      <div className="bg-[#002d96] text-white px-4 py-2 flex-shrink-0 flex items-center justify-between gap-3">
         {[
           ['Pagamento', campaign.paymentTerms],
           ['Pedido Mín.', campaign.minimumOrder],
