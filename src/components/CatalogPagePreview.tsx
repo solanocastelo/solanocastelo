@@ -51,11 +51,19 @@ export default function CatalogPagePreview({ page, pageIndex, campaign }: Props)
   const validity = formatValidity(campaign.validityFrom, campaign.validityTo)
 
   return (
-    <div className="catalog-page" id={`catalog-page-${pageIndex}`} style={{ background: '#e8e8e8' }}>
+    <div className="catalog-page" id={`catalog-page-${pageIndex}`} style={{ background: '#00b6f7' }}>
       {/* Header */}
       <div className="bg-[#312783] text-white px-3 py-2 flex items-center justify-between flex-shrink-0 gap-2">
         <div className="flex items-center gap-1.5 min-w-0">
-          <span className="text-[9px] font-black tracking-wide uppercase whitespace-nowrap">Casa Freitas</span>
+          {/* CF logo */}
+          <svg className="h-[14px] w-auto flex-shrink-0" viewBox="0 0 220 120" xmlns="http://www.w3.org/2000/svg">
+            <g transform="rotate(-12,110,60)">
+              <rect x="18" y="22" width="184" height="96" rx="16" ry="16" fill="#ffe600" stroke="#e8000d" strokeWidth="8"/>
+              <circle cx="110" cy="14" r="9" fill="none" stroke="#d0d0d0" strokeWidth="4"/>
+              <line x1="110" y1="23" x2="110" y2="30" stroke="#d0d0d0" strokeWidth="4"/>
+              <text x="110" y="90" textAnchor="middle" fontFamily="Arial Black,Arial,sans-serif" fontSize="68" fontWeight="900" fill="#e8000d" letterSpacing="-2">CF</text>
+            </g>
+          </svg>
           <span className="w-px h-3 bg-white/30 flex-shrink-0" />
           <span className="text-[7px] text-white/70 truncate">Encarte de Ofertas B2B</span>
         </div>
@@ -64,7 +72,7 @@ export default function CatalogPagePreview({ page, pageIndex, campaign }: Props)
         </span>
       </div>
 
-      {/* 2×3 Grid com cards brancos e espaçamento */}
+      {/* 2×2 Grid */}
       <div className="flex-1 grid grid-cols-2 grid-rows-2 gap-1.5 p-1.5 min-h-0">
         {Array.from({ length: 4 }).map((_, i) => {
           const product = page.products[i]
@@ -73,7 +81,6 @@ export default function CatalogPagePreview({ page, pageIndex, campaign }: Props)
               <div
                 key={i}
                 className="bg-white rounded-lg flex items-center justify-center"
-                style={{ boxShadow: '0 1px 4px rgba(0,0,0,0.08)' }}
               >
                 <span className="text-gray-200 text-xl">＋</span>
               </div>
@@ -83,7 +90,6 @@ export default function CatalogPagePreview({ page, pageIndex, campaign }: Props)
             <div
               key={product.id}
               className="rounded-lg overflow-hidden"
-              style={{ boxShadow: '0 1px 6px rgba(0,0,0,0.10)' }}
             >
               <ProductCard product={product} compact />
             </div>
@@ -92,7 +98,7 @@ export default function CatalogPagePreview({ page, pageIndex, campaign }: Props)
       </div>
 
       {/* Footer */}
-      <div className="bg-[#1d1d1f] text-white px-4 py-2 flex-shrink-0 flex items-center justify-between gap-3">
+      <div className="bg-[#312783] text-white px-4 py-2 flex-shrink-0 flex items-center justify-between gap-3">
         {[
           ['Pagamento', campaign.paymentTerms],
           ['Pedido Mín.', campaign.minimumOrder],
