@@ -59,7 +59,7 @@ export default function ProductCard({ product, compact = false }: Props) {
             )}
           </div>
           {hasDiscount && (
-            <div className="absolute top-3 left-3 bg-[#1faa4d] text-white text-[5.5px] font-black px-1 py-0.5 rounded leading-none">
+            <div className="absolute top-2 left-2 bg-[#1faa4d] text-white text-[6px] font-black px-1.5 py-0.5 rounded-[3px] leading-none shadow-sm">
               {product.discountPercent}% OFF
             </div>
           )}
@@ -90,8 +90,9 @@ export default function ProductCard({ product, compact = false }: Props) {
             </div>
           </div>
           {product.caixaMaster && (
-            <div className="flex items-center gap-1 bg-[#e7effb] text-[#1c3f86] font-semibold text-[5px] px-1.5 py-0.5 rounded-full w-fit">
-              📦 Cx.{product.caixaMaster}pç
+            <div className="flex items-center gap-1 bg-[#e7effb] text-[#1c3f86] font-bold text-[5.5px] px-1.5 py-[2px] rounded-full w-fit leading-none">
+              <svg viewBox="0 0 24 24" fill="none" stroke="#1c3f86" strokeWidth="2.2" strokeLinejoin="round" className="w-2 h-2 flex-shrink-0"><path d="M3 7l9-4 9 4v10l-9 4-9-4z"/><path d="M3 7l9 4 9-4M12 11v10"/></svg>
+              Cx. Master {product.caixaMaster} pç
             </div>
           )}
           <div className="flex items-center gap-1.5 border-t border-gray-100 pt-1 text-[5.5px] text-[#8a8a8a] mt-auto">

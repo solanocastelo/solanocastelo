@@ -45,6 +45,10 @@ export default function ImageManager({ product, onClose }: Props) {
     canvas.height = completedCrop.height * scaleY
     const ctx = canvas.getContext('2d')
     if (!ctx) return null
+    // Fill white before drawing — prevents transparent PNG pixels from
+    // rendering as black when converting to JPEG (which has no alpha channel)
+    ctx.fillStyle = '#ffffff'
+    ctx.fillRect(0, 0, canvas.width, canvas.height)
     ctx.drawImage(
       imgRef.current,
       completedCrop.x * scaleX,
