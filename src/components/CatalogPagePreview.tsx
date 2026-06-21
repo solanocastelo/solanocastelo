@@ -92,31 +92,22 @@ export default function CatalogPagePreview({ page, pageIndex, campaign }: Props)
       </div>
 
       {/* Footer */}
-      <div className="bg-[#0D1F33] text-white px-3 py-2 flex-shrink-0">
-        <div className="grid grid-cols-2 gap-x-3 gap-y-0.5">
-          <div>
-            <p className="text-[6px] text-white/40 uppercase tracking-wider">Pagamento</p>
-            <p className="text-[8px] font-semibold leading-tight">{campaign.paymentTerms}</p>
-          </div>
-          <div>
-            <p className="text-[6px] text-white/40 uppercase tracking-wider">Pedido Mínimo</p>
-            <p className="text-[8px] font-semibold leading-tight">{campaign.minimumOrder}</p>
-          </div>
-          {validity && (
-            <div className="col-span-2">
-              <p className="text-[6px] text-white/40 uppercase tracking-wider">Validade</p>
-              <p className="text-[8px] font-semibold leading-tight">{validity}</p>
+      <div className="bg-[#1d1d1f] text-white px-4 py-2 flex-shrink-0 flex items-center justify-between gap-3">
+        {[
+          ['Pagamento', campaign.paymentTerms],
+          ['Pedido Mín.', campaign.minimumOrder],
+          ...(validity ? [['Validade', validity]] : []),
+          ['Praça', campaign.plaza],
+          ['Contato', campaign.commercialEmail],
+        ].map(([l, v], i) => (
+          <div key={l} className="flex items-center gap-3">
+            {i > 0 && <div className="w-px h-6 bg-white/15 flex-shrink-0" />}
+            <div className="flex flex-col min-w-0">
+              <span className="text-[5px] text-white/40 uppercase tracking-wider whitespace-nowrap">{l}</span>
+              <span className="text-[7px] font-bold truncate max-w-[70px]">{v}</span>
             </div>
-          )}
-          <div>
-            <p className="text-[6px] text-white/40 uppercase tracking-wider">Praça</p>
-            <p className="text-[8px] font-semibold leading-tight">{campaign.plaza}</p>
           </div>
-          <div>
-            <p className="text-[6px] text-white/40 uppercase tracking-wider">Contato</p>
-            <p className="text-[8px] font-semibold leading-tight truncate">{campaign.commercialEmail}</p>
-          </div>
-        </div>
+        ))}
       </div>
     </div>
   )

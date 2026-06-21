@@ -168,12 +168,18 @@ export default function ExportButton() {
 
       // Cover page
       if (campaign.coverImageBase64) {
+        const now = new Date()
+        const stamp = now.toLocaleDateString('pt-BR') + ' às ' + now.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })
         pageHtmls.push(`
           <div class="page cover-page">
             <img src="${campaign.coverImageBase64}" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;" />
             <div style="position:absolute;bottom:0;left:0;right:0;background:linear-gradient(to top,rgba(13,31,51,0.9),transparent);padding:60px 50px 50px;">
               <h1 style="color:#fff;font-size:52px;font-weight:700;line-height:1.2;margin:0;">${escapeHtml(campaign.title)}</h1>
               <p style="color:rgba(255,255,255,0.6);font-size:26px;margin:12px 0 0;">${escapeHtml(campaign.plaza)}</p>
+            </div>
+            <div style="position:absolute;bottom:20px;right:28px;z-index:10;text-align:right;">
+              <div style="font-size:11px;color:rgba(255,255,255,.45);letter-spacing:.06em;text-transform:uppercase;margin-bottom:2px;">Gerado em</div>
+              <div style="font-size:13px;color:rgba(255,255,255,.7);font-weight:600;">${stamp}</div>
             </div>
           </div>`)
       }

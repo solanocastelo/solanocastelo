@@ -1,4 +1,5 @@
 'use client'
+import { useState, useEffect } from 'react'
 import { useCatalogStore } from '@/store/catalog'
 import CampaignForm from '@/components/CampaignForm'
 import FilterBar from '@/components/FilterBar'
@@ -10,36 +11,26 @@ import FamilySuggestions from '@/components/FamilySuggestions'
 import { Product } from '@/types/catalog'
 
 export default function Home() {
-  const { setProducts, setLoading, setError, loading, error, products, pages } =
+  const { setProducts, setError, error, products, pages } =
     useCatalogStore()
+  const [loading, setLoading] = useState<'sheets' | 'drive' | false>(false)
 
-  const loadData = async () => {
-    setLoading(true)
-    setError(null)
+  const loadAll = async () => {
+    setLoading('sheets')
     try {
       const [sheetsRes, driveRes] = await Promise.all([
         fetch('/api/sheets'),
         fetch('/api/drive/list'),
       ])
-
       const sheetsData = await sheetsRes.json()
       if (sheetsData.error) throw new Error(sheetsData.error)
-
       const driveData = await driveRes.json()
       const imageMap: Record<string, string[]> = driveData.imageMap || {}
-
       const enriched: Product[] = (sheetsData.products || []).map((p: Product) => {
         const fileIds = imageMap[p.code] || []
         const fileId = fileIds[0]
-        return {
-          ...p,
-          imageFileIds: fileIds,
-          imageFileId: fileId,
-          imageUrl: fileId ? `/api/drive/${fileId}` : undefined,
-          hasImage: fileIds.length > 0,
-        }
+        return { ...p, imageFileIds: fileIds, imageFileId: fileId, imageUrl: fileId ? `/api/drive/${fileId}` : undefined, hasImage: fileIds.length > 0 }
       })
-
       setProducts(enriched)
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Erro ao carregar dados')
@@ -47,6 +38,55 @@ export default function Home() {
       setLoading(false)
     }
   }
+
+  const loadSheets = async () => {
+    setLoading('sheets')
+    try {
+      const res = await fetch('/api/sheets')
+      const sheetsData = await res.json()
+      if (sheetsData.error) throw new Error(sheetsData.error)
+      // Preserve existing image data
+      const currentProducts = useCatalogStore.getState().products
+      const imageByCode: Record<string, Pick<Product, 'imageFileId'|'imageFileIds'|'imageUrl'|'hasImage'|'customImageBase64'|'cropData'>> = {}
+      currentProducts.forEach(p => {
+        imageByCode[p.code] = { imageFileId: p.imageFileId, imageFileIds: p.imageFileIds, imageUrl: p.imageUrl, hasImage: p.hasImage, customImageBase64: p.customImageBase64, cropData: p.cropData }
+      })
+      const enriched: Product[] = (sheetsData.products || []).map((p: Product) => ({
+        ...p,
+        ...(imageByCode[p.code] || { hasImage: false }),
+      }))
+      setProducts(enriched)
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Erro ao atualizar dados')
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const loadDrive = async () => {
+    setLoading('drive')
+    try {
+      const res = await fetch('/api/drive/list')
+      const driveData = await res.json()
+      const imageMap: Record<string, string[]> = driveData.imageMap || {}
+      const currentProducts = useCatalogStore.getState().products
+      const enriched: Product[] = currentProducts.map(p => {
+        const fileIds = imageMap[p.code] || []
+        const fileId = fileIds[0]
+        return { ...p, imageFileIds: fileIds, imageFileId: fileId, imageUrl: fileId ? `/api/drive/${fileId}` : undefined, hasImage: fileIds.length > 0 }
+      })
+      setProducts(enriched)
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Erro ao atualizar fotos')
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  useEffect(() => {
+    loadAll()
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -69,18 +109,27 @@ export default function Home() {
                 {products.length} produtos · {pages.length} página(s)
               </span>
             )}
-            <button
-              onClick={loadData}
-              disabled={loading}
-              className="bg-white/10 hover:bg-white/20 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors flex items-center gap-2 disabled:opacity-50"
-            >
-              {loading ? (
-                <span className="animate-spin inline-block">⏳</span>
-              ) : (
-                <span>🔄</span>
-              )}
-              {loading ? 'Carregando...' : 'Carregar do Google'}
-            </button>
+            {products.length === 0 ? (
+              <button
+                onClick={loadAll}
+                disabled={!!loading}
+                className="bg-white/10 hover:bg-white/20 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors flex items-center gap-2 disabled:opacity-50"
+              >
+                {loading ? <span className="animate-spin inline-block">⏳</span> : <span>🔄</span>}
+                {loading ? 'Carregando...' : 'Carregar do Google'}
+              </button>
+            ) : (
+              <>
+                <button onClick={loadSheets} disabled={!!loading} className="bg-white/10 hover:bg-white/20 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors flex items-center gap-2 disabled:opacity-50">
+                  {loading === 'sheets' ? <span className="animate-spin inline-block">⏳</span> : <span>📊</span>}
+                  {loading === 'sheets' ? 'Atualizando...' : 'Atualizar Dados'}
+                </button>
+                <button onClick={loadDrive} disabled={!!loading} className="bg-white/10 hover:bg-white/20 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors flex items-center gap-2 disabled:opacity-50">
+                  {loading === 'drive' ? <span className="animate-spin inline-block">⏳</span> : <span>🖼️</span>}
+                  {loading === 'drive' ? 'Atualizando...' : 'Atualizar Fotos'}
+                </button>
+              </>
+            )}
           </div>
         </div>
       </header>
