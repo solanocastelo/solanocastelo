@@ -28,6 +28,7 @@ export async function GET(
         const quality = qualityParam ? parseInt(qualityParam, 10) : 72
         const resized = await sharp(buffer)
           .resize({ width, withoutEnlargement: true })
+          .flatten({ background: '#ffffff' }) // composite transparent PNGs onto white (avoids black bg in JPEG)
           .jpeg({ quality, mozjpeg: true })
           .toBuffer()
 
