@@ -76,12 +76,12 @@ const DOC_CSS = `
   }
   .photo .frame{
     width:100%; height:100%; aspect-ratio:1 / 1; border-radius:8px;
-    background-color:#f4f4f4;
+    background-color:#ffffff;
     background-image:repeating-linear-gradient(45deg,#ececec 0 12px,#f7f7f7 12px 24px);
     display:flex; align-items:center; justify-content:center; overflow:hidden;
   }
   .photo .frame .ph{font-family:'SF Mono',Menlo,Consolas,monospace; font-size:13px; color:#a4a4a4; letter-spacing:.06em; text-transform:uppercase;}
-  .photo img{width:100%; height:100%; object-fit:contain;}
+  .photo img{width:100%; height:100%; object-fit:contain; background:#ffffff;}
 
   .badge{
     position:absolute; top:16px; left:16px;
@@ -125,6 +125,7 @@ const DOC_CSS = `
   .page-footer .vsep{width:1px; height:64px; background:rgba(255,255,255,.14);}
 
   @page{ size:1080px 1920px; margin:0; }
+  * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
   @media print{
     html,body{background:#fff;}
     .pages{padding:0;}
