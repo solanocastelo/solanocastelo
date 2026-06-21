@@ -55,15 +55,7 @@ export default function CatalogPagePreview({ page, pageIndex, campaign }: Props)
       {/* Header */}
       <div className="bg-[#002d96] text-white px-3 py-2 flex items-center justify-between flex-shrink-0 gap-2">
         <div className="flex items-center gap-1.5 min-w-0">
-          {/* CF logo */}
-          <svg className="h-[14px] w-auto flex-shrink-0" viewBox="0 0 220 120" xmlns="http://www.w3.org/2000/svg">
-            <g transform="rotate(-12,110,60)">
-              <rect x="18" y="22" width="184" height="96" rx="16" ry="16" fill="#ffe600" stroke="#e8000d" strokeWidth="8"/>
-              <circle cx="110" cy="14" r="9" fill="none" stroke="#d0d0d0" strokeWidth="4"/>
-              <line x1="110" y1="23" x2="110" y2="30" stroke="#d0d0d0" strokeWidth="4"/>
-              <text x="110" y="90" textAnchor="middle" fontFamily="Arial Black,Arial,sans-serif" fontSize="68" fontWeight="900" fill="#e8000d" letterSpacing="-2">CF</text>
-            </g>
-          </svg>
+          <img src="/logo-cf.svg" alt="Casa Freitas" className="h-[18px] w-auto flex-shrink-0" />
           <span className="w-px h-3 bg-white/30 flex-shrink-0" />
           <span className="text-[7px] text-white/70 truncate">Encarte de Ofertas B2B</span>
         </div>

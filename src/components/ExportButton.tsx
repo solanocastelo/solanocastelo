@@ -80,7 +80,7 @@ const DOC_CSS = `
     background:var(--primary); color:#fff;
   }
   .page-header .brand{display:flex; align-items:center; gap:20px;}
-  .page-header .brand .logo{height:78px; width:auto;}
+  .page-header .brand .logo{height:72px; width:auto;}
   .page-header .sep{width:1px; height:44px; background:rgba(255,255,255,.35);}
   .page-header .sub{font-size:24px; font-weight:500; opacity:.9;}
   .page-header .pg{font-size:27px; font-weight:700; background:rgba(255,255,255,.14); padding:12px 27px; border-radius:999px;}
@@ -274,7 +274,7 @@ export default function ExportButton() {
         pageHtmls.push(`
           <div class="page">
             <header class="page-header">
-              <div class="brand"><svg class="logo" viewBox="0 0 220 120" xmlns="http://www.w3.org/2000/svg"><g transform="rotate(-12,110,60)"><rect x="18" y="22" width="184" height="96" rx="16" ry="16" fill="#ffe600" stroke="#e8000d" stroke-width="8"/><circle cx="110" cy="14" r="9" fill="none" stroke="#d0d0d0" stroke-width="4"/><line x1="110" y1="23" x2="110" y2="30" stroke="#d0d0d0" stroke-width="4"/><text x="110" y="90" text-anchor="middle" font-family="Arial Black,Arial,sans-serif" font-size="68" font-weight="900" fill="#e8000d" letter-spacing="-2">CF</text></g></svg><span class="sep"></span><span class="sub">Encarte de Ofertas B2B</span></div>
+              <div class="brand"><img class="logo" src="/logo-cf.svg" alt="Casa Freitas" /><span class="sep"></span><span class="sub">Encarte de Ofertas B2B</span></div>
               <div class="pg">Pg. ${pageNum} / ${totalPages}</div>
             </header>
             <div class="grid">${cards}</div>
