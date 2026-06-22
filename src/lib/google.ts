@@ -6,9 +6,15 @@ const SCOPES = [
 ]
 
 export function getGoogleAuth() {
-  const privateKey = (process.env.GOOGLE_PRIVATE_KEY || '').replace(/\\n/g, '\n')
+  // Normaliza a chave privada vinda de variável de ambiente:
+  // - remove aspas que às vezes são coladas junto (Netlify/Vercel)
+  // - converte \n literais em quebras de linha reais
+  const privateKey = (process.env.GOOGLE_PRIVATE_KEY || '')
+    .trim()
+    .replace(/^["']|["']$/g, '')
+    .replace(/\\n/g, '\n')
   return new google.auth.JWT({
-    email: process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL,
+    email: (process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL || '').trim(),
     key: privateKey,
     scopes: SCOPES,
   })
