@@ -1,0 +1,7 @@
+name = "casafreitas-drive-proxy"
+main = "src/index.ts"
+compatibility_date = "2024-09-23"
+
+# Os segredos NÃO ficam aqui. Defina-os com:
+#   wrangler secret put GOOGLE_SERVICE_ACCOUNT_EMAIL
+#   wrangler secret put GOOGLE_PRIVATE_KEY

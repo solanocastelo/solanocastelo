@@ -4,6 +4,7 @@ import ReactCrop, { Crop, PixelCrop } from 'react-image-crop'
 import 'react-image-crop/dist/ReactCrop.css'
 import { Product } from '@/types/catalog'
 import { useCatalogStore } from '@/store/catalog'
+import { driveImageUrl } from '@/lib/imageUrl'
 
 interface Props {
   product: Product
@@ -15,7 +16,7 @@ export default function ImageManager({ product, onClose }: Props) {
   const [driveIdx, setDriveIdx] = useState(0)
   const [src, setSrc] = useState<string>(
     product.customImageBase64 ||
-      (product.imageFileId ? `/api/drive/${product.imageFileId}` : '')
+      (product.imageFileId ? driveImageUrl(product.imageFileId) : '')
   )
   const [crop, setCrop] = useState<Crop>({
     unit: '%',
@@ -121,13 +122,13 @@ export default function ImageManager({ product, onClose }: Props) {
                     key={fid}
                     onClick={() => {
                       setDriveIdx(idx)
-                      setSrc(`/api/drive/${fid}`)
+                      setSrc(driveImageUrl(fid))
                     }}
                     className={`w-16 h-16 rounded-lg overflow-hidden border-2 transition-colors ${
                       driveIdx === idx ? 'border-[#312783]' : 'border-gray-200'
                     }`}
                   >
-                    <img src={`/api/drive/${fid}`} alt={`Foto ${idx+1}`} className="w-full h-full object-contain" />
+                    <img src={driveImageUrl(fid)} alt={`Foto ${idx+1}`} className="w-full h-full object-contain" />
                   </button>
                 ))}
               </div>

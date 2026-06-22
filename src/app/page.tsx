@@ -9,6 +9,7 @@ import CoverUpload from '@/components/CoverUpload'
 import ExportButton from '@/components/ExportButton'
 import FamilySuggestions from '@/components/FamilySuggestions'
 import { Product } from '@/types/catalog'
+import { driveImageUrl } from '@/lib/imageUrl'
 
 export default function Home() {
   const { setProducts, setError, error, products, pages } =
@@ -29,7 +30,7 @@ export default function Home() {
       const enriched: Product[] = (sheetsData.products || []).map((p: Product) => {
         const fileIds = imageMap[p.code] || []
         const fileId = fileIds[0]
-        return { ...p, imageFileIds: fileIds, imageFileId: fileId, imageUrl: fileId ? `/api/drive/${fileId}` : undefined, hasImage: fileIds.length > 0 }
+        return { ...p, imageFileIds: fileIds, imageFileId: fileId, imageUrl: fileId ? driveImageUrl(fileId) : undefined, hasImage: fileIds.length > 0 }
       })
       setProducts(enriched)
     } catch (err) {
@@ -73,7 +74,7 @@ export default function Home() {
       const enriched: Product[] = currentProducts.map(p => {
         const fileIds = imageMap[p.code] || []
         const fileId = fileIds[0]
-        return { ...p, imageFileIds: fileIds, imageFileId: fileId, imageUrl: fileId ? `/api/drive/${fileId}` : undefined, hasImage: fileIds.length > 0 }
+        return { ...p, imageFileIds: fileIds, imageFileId: fileId, imageUrl: fileId ? driveImageUrl(fileId) : undefined, hasImage: fileIds.length > 0 }
       })
       setProducts(enriched)
     } catch (err) {

@@ -4,6 +4,7 @@ import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 import { Product } from '@/types/catalog'
 import { useCatalogStore } from '@/store/catalog'
+import { driveImageUrl } from '@/lib/imageUrl'
 import ImageManager from './ImageManager'
 
 interface Props {
@@ -34,7 +35,7 @@ export default function ProductCard({ product, compact = false }: Props) {
   const imageUrl = product.customImageBase64
     ? product.customImageBase64
     : product.imageFileId
-    ? `/api/drive/${product.imageFileId}`
+    ? driveImageUrl(product.imageFileId)
     : null
 
   const { main: priceMain, cents: priceCents } = splitPrice(product.priceFormatted)

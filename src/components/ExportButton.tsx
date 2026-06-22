@@ -1,6 +1,7 @@
 'use client'
 import { useState } from 'react'
 import { useCatalogStore } from '@/store/catalog'
+import { driveImageUrl } from '@/lib/imageUrl'
 
 function formatDate(d: string): string {
   if (!d) return ''
@@ -29,9 +30,15 @@ async function toWhiteJpeg(url: string): Promise<string> {
     img.crossOrigin = 'anonymous'
     img.onload = () => {
       try {
+        // Limita a largura a 600px para manter o PDF leve (WhatsApp),
+        // já que o Worker serve a imagem em tamanho original.
+        const MAX_W = 600
+        const nw = img.naturalWidth || MAX_W
+        const nh = img.naturalHeight || MAX_W
+        const scale = nw > MAX_W ? MAX_W / nw : 1
         const canvas = document.createElement('canvas')
-        canvas.width = img.naturalWidth || 600
-        canvas.height = img.naturalHeight || 600
+        canvas.width = Math.round(nw * scale)
+        canvas.height = Math.round(nh * scale)
         const ctx = canvas.getContext('2d')
         if (!ctx) { resolve(url); return }
         ctx.fillStyle = '#ffffff'
@@ -223,7 +230,7 @@ export default function ExportButton() {
       let converted = 0
       await Promise.all(
         uniqueIds.map(async id => {
-          const jpeg = await toWhiteJpeg(`/api/drive/${id}?w=600&q=72`)
+          const jpeg = await toWhiteJpeg(driveImageUrl(id))
           imageMap.set(id, jpeg)
           converted++
           setProgress(Math.round((converted / uniqueIds.length) * 100))
@@ -239,7 +246,7 @@ export default function ExportButton() {
 
           const imgSrc = p.customImageBase64
             ? p.customImageBase64
-            : p.imageFileId ? (imageMap.get(p.imageFileId) || `/api/drive/${p.imageFileId}?w=600&q=72`) : null
+            : p.imageFileId ? (imageMap.get(p.imageFileId) || driveImageUrl(p.imageFileId)) : null
           const imgHtml = imgSrc
             ? `<img src="${imgSrc}" alt="" loading="eager" />`
             : `<span class="ph">Foto do produto</span>`
