@@ -5,6 +5,7 @@ import 'react-image-crop/dist/ReactCrop.css'
 import { Product } from '@/types/catalog'
 import { useCatalogStore } from '@/store/catalog'
 import { driveImageUrl } from '@/lib/imageUrl'
+import { trimWhiteBorders } from '@/lib/trimWhite'
 
 interface Props {
   product: Product
@@ -65,8 +66,9 @@ export default function ImageManager({ product, onClose }: Props) {
   }, [completedCrop, src])
 
   const handleSave = async () => {
-    const result = await getCroppedImage()
+    let result = await getCroppedImage()
     if (result) {
+      result = await trimWhiteBorders(result)
       updateProductImage(product.id, result)
       onClose()
     }

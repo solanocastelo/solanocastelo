@@ -1,10 +1,11 @@
 'use client'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useSortable } from '@dnd-kit/sortable'
 import { CSS } from '@dnd-kit/utilities'
 import { Product } from '@/types/catalog'
 import { useCatalogStore } from '@/store/catalog'
 import { driveImageUrl } from '@/lib/imageUrl'
+import { trimWhiteBorders } from '@/lib/trimWhite'
 import ImageManager from './ImageManager'
 
 interface Props {
@@ -32,11 +33,18 @@ export default function ProductCard({ product, compact = false }: Props) {
     opacity: isDragging ? 0.4 : 1,
   }
 
-  const imageUrl = product.customImageBase64
+  const rawImageUrl = product.customImageBase64
     ? product.customImageBase64
     : product.imageFileId
     ? driveImageUrl(product.imageFileId)
     : null
+
+  const [imageUrl, setImageUrl] = useState<string | null>(rawImageUrl)
+  useEffect(() => {
+    if (!rawImageUrl) { setImageUrl(null); return }
+    setImageUrl(rawImageUrl) // mostra imediato
+    trimWhiteBorders(rawImageUrl).then(setImageUrl)
+  }, [rawImageUrl])
 
   const { main: priceMain, cents: priceCents } = splitPrice(product.priceFormatted)
   const hasDiscount = product.discountPercent > 0
