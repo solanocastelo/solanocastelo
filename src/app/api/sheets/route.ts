@@ -9,8 +9,14 @@ function parsePrice(val: string): number {
 
 export async function GET() {
   try {
+    const spreadsheetId = process.env.GOOGLE_SHEETS_ID
+    if (!spreadsheetId) {
+      return NextResponse.json(
+        { error: 'Variável GOOGLE_SHEETS_ID em falta nas configurações do servidor.' },
+        { status: 500 }
+      )
+    }
     const sheets = await getSheetsClient()
-    const spreadsheetId = process.env.GOOGLE_SHEETS_ID!
 
     const response = await sheets.spreadsheets.values.get({
       spreadsheetId,
@@ -81,8 +87,9 @@ export async function GET() {
     return NextResponse.json({ products, headers, totalRows: rows.length - 1 })
   } catch (error) {
     console.error('Sheets API error:', error)
+    const detail = error instanceof Error ? error.message : String(error)
     return NextResponse.json(
-      { error: 'Falha ao ler a folha de cálculo. Verifica as credenciais no .env.local.' },
+      { error: `Falha ao ler a folha de cálculo. Verifica as credenciais. (${detail})` },
       { status: 500 }
     )
   }
