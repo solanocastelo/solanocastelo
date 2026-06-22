@@ -147,6 +147,7 @@ export default function ImageManager({ product, onClose }: Props) {
                   ref={imgRef}
                   src={src}
                   alt="Preview"
+                  crossOrigin="anonymous"
                   className="max-w-full"
                   style={{ maxHeight: '400px', objectFit: 'contain' }}
                 />
