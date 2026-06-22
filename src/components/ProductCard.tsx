@@ -95,7 +95,7 @@ export default function ProductCard({ product, compact = false }: Props) {
               Cx. Master {product.caixaMaster} pç
             </div>
           )}
-          <div className="flex items-center gap-1.5 border-t border-gray-100 pt-1 text-[5.5px] text-[#8a8a8a] mt-auto">
+          <div className="flex items-center gap-1.5 border-t border-gray-100 pt-1 text-[8px] text-[#8a8a8a] mt-auto">
             <span>Cód. <b className="text-[#444]">{product.code}</b></span>
             {product.reference && <span>Ref. <b className="text-[#444]">{product.reference}</b></span>}
           </div>

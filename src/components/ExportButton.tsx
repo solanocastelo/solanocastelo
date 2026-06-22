@@ -75,15 +75,15 @@ const DOC_CSS = `
   .cover-page{background:var(--primary); position:relative;}
 
   .page-header{
-    flex:none; height:130px; padding:0 36px;
+    flex:none; height:96px; padding:0 36px;
     display:flex; align-items:center; justify-content:space-between;
     background:var(--primary); color:#fff;
   }
-  .page-header .brand{display:flex; align-items:center; gap:20px;}
-  .page-header .brand .logo{height:72px; width:auto;}
-  .page-header .sep{width:1px; height:44px; background:rgba(255,255,255,.35);}
-  .page-header .sub{font-size:24px; font-weight:500; opacity:.9;}
-  .page-header .pg{font-size:27px; font-weight:700; background:rgba(255,255,255,.14); padding:12px 27px; border-radius:999px;}
+  .page-header .brand{display:flex; align-items:center; gap:16px;}
+  .page-header .brand .logo{height:48px; width:auto;}
+  .page-header .sep{width:1px; height:30px; background:rgba(255,255,255,.35);}
+  .page-header .sub{font-size:16px; font-weight:500; opacity:.9;}
+  .page-header .pg{font-size:18px; font-weight:700; background:rgba(255,255,255,.14); padding:8px 18px; border-radius:999px;}
 
   .grid{
     flex:1 1 auto; display:grid; grid-template-columns:repeat(2,1fr);
@@ -107,48 +107,48 @@ const DOC_CSS = `
     background-image:repeating-linear-gradient(45deg,#ececec 0 12px,#f7f7f7 12px 24px);
     display:flex; align-items:center; justify-content:center; overflow:hidden;
   }
-  .photo .frame .ph{font-family:'SF Mono',Menlo,Consolas,monospace; font-size:20px; color:#a4a4a4; letter-spacing:.06em; text-transform:uppercase;}
+  .photo .frame .ph{font-family:'SF Mono',Menlo,Consolas,monospace; font-size:13px; color:#a4a4a4; letter-spacing:.06em; text-transform:uppercase;}
   .photo img{width:100%; height:100%; object-fit:contain; background:#ffffff;}
 
   .badge{
     position:absolute; top:16px; left:16px;
     background:var(--discount); color:#fff;
-    font-size:24px; font-weight:900; padding:13px 22px; border-radius:10px;
+    font-size:16px; font-weight:900; padding:9px 16px; border-radius:10px;
     letter-spacing:.02em;
   }
 
-  .info{border-top:1px solid var(--line); display:flex; flex-direction:column; padding:20px 22px 22px; gap:16px;}
+  .info{border-top:1px solid var(--line); display:flex; flex-direction:column; padding:18px 20px 20px; gap:13px;}
   .name{
-    font-weight:700; line-height:1.3; color:var(--ink); font-size:26px; min-height:67px;
+    font-weight:700; line-height:1.3; color:var(--ink); font-size:17px; min-height:43px;
     display:-webkit-box; -webkit-line-clamp:2; -webkit-box-orient:vertical; overflow:hidden;
     word-break:break-word; overflow-wrap:break-word;
   }
   .price{display:flex; flex-direction:column; gap:2px;}
-  .price .was{color:#9a9a9a; text-decoration:line-through; font-size:20px;}
+  .price .was{color:#9a9a9a; text-decoration:line-through; font-size:13px;}
   .price .now{display:flex; align-items:baseline; color:#161616; line-height:1;}
-  .price .now .cur{font-weight:700; margin-right:5px; font-size:30px;}
-  .price .now .int{font-weight:900; letter-spacing:-2px; font-size:72px;}
-  .price .now .dec{font-weight:700; font-size:33px;}
+  .price .now .cur{font-weight:700; margin-right:5px; font-size:20px;}
+  .price .now .int{font-weight:900; letter-spacing:-2px; font-size:48px;}
+  .price .now .dec{font-weight:700; font-size:22px;}
 
   .pill{
     align-self:flex-start; width:fit-content; max-width:100%;
     display:inline-flex; align-items:center; gap:8px; white-space:nowrap;
     background:var(--pill-bg); color:var(--pill-fg); font-weight:700; border-radius:999px;
-    font-size:21px; padding:10px 22px;
+    font-size:14px; padding:7px 16px;
   }
-  .pill svg{width:22px; height:22px; flex:none;}
+  .pill svg{width:16px; height:16px; flex:none;}
 
-  .meta{display:flex; align-items:center; gap:18px; border-top:1px solid #eee; padding-top:14px; font-size:18px; color:var(--muted);}
+  .meta{display:flex; align-items:center; gap:18px; border-top:1px solid #eee; padding-top:11px; font-size:18px; color:var(--muted);}
   .meta b{color:#444; font-weight:700;}
 
   .page-footer{
-    flex:none; height:170px; padding:0 40px;
+    flex:none; height:150px; padding:0 40px;
     display:flex; align-items:center; justify-content:space-between; gap:24px;
     background:var(--footer-bg); color:#fff;
   }
-  .page-footer .col{display:flex; flex-direction:column; gap:6px;}
-  .page-footer .lbl{font-size:16px; letter-spacing:.12em; text-transform:uppercase; color:rgba(255,255,255,.6);}
-  .page-footer .val{font-size:27px; font-weight:700;}
+  .page-footer .col{display:flex; flex-direction:column; gap:5px;}
+  .page-footer .lbl{font-size:11px; letter-spacing:.12em; text-transform:uppercase; color:rgba(255,255,255,.6);}
+  .page-footer .val{font-size:18px; font-weight:700;}
   .page-footer .vsep{width:1px; height:64px; background:rgba(255,255,255,.25);}
 
   @page{ size:1080px 1920px; margin:0; }
