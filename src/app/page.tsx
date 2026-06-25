@@ -21,8 +21,8 @@ export default function Home() {
     setLoading('sheets')
     try {
       const [sheetsRes, driveRes] = await Promise.all([
-        fetch('/api/sheets'),
-        fetch('/api/drive/list'),
+        fetch('/api/sheets', { cache: 'no-store' }),
+        fetch('/api/drive/list', { cache: 'no-store' }),
       ])
       const sheetsData = await sheetsRes.json()
       if (sheetsData.error) throw new Error(sheetsData.error)
@@ -44,7 +44,7 @@ export default function Home() {
   const loadSheets = async () => {
     setLoading('sheets')
     try {
-      const res = await fetch('/api/sheets')
+      const res = await fetch('/api/sheets', { cache: 'no-store' })
       const sheetsData = await res.json()
       if (sheetsData.error) throw new Error(sheetsData.error)
       // Preserve existing image data
@@ -68,7 +68,7 @@ export default function Home() {
   const loadDrive = async () => {
     setLoading('drive')
     try {
-      const res = await fetch('/api/drive/list')
+      const res = await fetch('/api/drive/list', { cache: 'no-store' })
       const driveData = await res.json()
       const imageMap: Record<string, string[]> = driveData.imageMap || {}
       const currentProducts = useCatalogStore.getState().products

@@ -1,6 +1,9 @@
 import { NextResponse } from 'next/server'
 import { getDriveClient } from '@/lib/google'
 
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
+
 export async function GET() {
   try {
     const drive = await getDriveClient()

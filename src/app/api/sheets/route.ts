@@ -3,6 +3,9 @@ import { getSheetsClient } from '@/lib/google'
 import { Product } from '@/types/catalog'
 import { formatCurrency } from '@/lib/catalog-logic'
 
+export const dynamic = 'force-dynamic'
+export const revalidate = 0
+
 function parsePrice(val: string): number {
   return parseFloat((val || '0').toString().replace(/[^\d,.]/g, '').replace(',', '.')) || 0
 }
