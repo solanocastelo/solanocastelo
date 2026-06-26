@@ -158,6 +158,34 @@ const DOC_CSS = `
   .page-footer .val{font-size:18px; font-weight:700;}
   .page-footer .vsep{width:1px; height:64px; background:rgba(255,255,255,.25);}
 
+  /* Index page */
+  .idx-page{}
+  .idx-body{
+    flex:1; display:flex; flex-direction:column;
+    padding:60px 80px; gap:40px; overflow:hidden;
+  }
+  .idx-title{
+    font-size:48px; font-weight:900; color:#fff;
+    margin:0; letter-spacing:-.5px;
+  }
+  .idx-list{
+    display:flex; flex-direction:column; gap:0;
+    background:rgba(255,255,255,.08); border-radius:20px; overflow:hidden;
+  }
+  .idx-row{
+    display:flex; align-items:center; gap:0;
+    padding:28px 40px; border-bottom:1px solid rgba(255,255,255,.1);
+    text-decoration:none; color:#fff;
+    transition:background .15s;
+  }
+  .idx-row:last-child{border-bottom:none;}
+  .idx-name{font-size:28px; font-weight:700; white-space:nowrap;}
+  .idx-dots{
+    flex:1; margin:0 20px; border-bottom:2px dotted rgba(255,255,255,.25);
+    min-width:40px;
+  }
+  .idx-pg{font-size:26px; font-weight:900; color:rgba(255,255,255,.85); white-space:nowrap;}
+
   @page{ size:1080px 1920px; margin:0; }
   * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
   @media print{
@@ -198,7 +226,6 @@ export default function ExportButton() {
         <div class="col"><div class="lbl">${escapeHtml(l)}</div><div class="val">${escapeHtml(v)}</div></div>
       `).join('')
 
-      const totalPages = pages.length + (campaign.coverImageBase64 ? 1 : 0)
       const pageHtmls: string[] = []
 
       // Cover page
@@ -237,7 +264,43 @@ export default function ExportButton() {
         })
       )
 
+      // Build index: first page number per tipo
+      const coverOffset = campaign.coverImageBase64 ? 1 : 0
+      const indexOffset = 1 // the index page itself
+      const typePageMap = new Map<string, number>() // tipo → page number (1-based, after cover+index)
+      for (let i = 0; i < pages.length; i++) {
+        for (const p of pages[i].products) {
+          const t = p.type || 'Outros'
+          if (!typePageMap.has(t)) typePageMap.set(t, i + 1 + coverOffset + indexOffset)
+        }
+      }
+      const typeEntries = Array.from(typePageMap.entries())
+
+      // Index page
+      const indexRows = typeEntries.map(([tipo, pgNum]) => `
+        <a href="#tipo-${encodeURIComponent(tipo)}" class="idx-row">
+          <span class="idx-name">${escapeHtml(tipo)}</span>
+          <span class="idx-dots"></span>
+          <span class="idx-pg">Pg. ${pgNum}</span>
+        </a>`).join('')
+
+      pageHtmls.push(`
+        <div class="page idx-page">
+          <header class="page-header">
+            <div class="brand"><img class="logo" src="/logo-cf.svg" alt="Casa Freitas" /><span class="sep"></span><span class="sub">Encarte de Ofertas B2B</span></div>
+            <div class="pg">Índice</div>
+          </header>
+          <div class="idx-body">
+            <h2 class="idx-title">Índice de Produtos</h2>
+            <div class="idx-list">${indexRows}</div>
+          </div>
+          <footer class="page-footer">${footerHtml}</footer>
+        </div>`)
+
+      const totalPages = pages.length + coverOffset + indexOffset
+
       // Product pages — 4 per page
+      const seenTypes = new Set<string>()
       for (let i = 0; i < pages.length; i++) {
         const page = pages[i]
         const cards = Array.from({ length: 4 }).map((_, j) => {
@@ -277,9 +340,15 @@ export default function ExportButton() {
             </div>`
         }).join('')
 
-        const pageNum = i + 1 + (campaign.coverImageBase64 ? 1 : 0)
+        // Anchor id for the first page of each tipo
+        const tiposOnPage = Array.from(new Set(pages[i].products.map(p => p.type || 'Outros')))
+        const newTipos = tiposOnPage.filter(t => !seenTypes.has(t))
+        newTipos.forEach(t => seenTypes.add(t))
+        const anchorAttrs = newTipos.map(t => `id="tipo-${encodeURIComponent(t)}"`).join(' ')
+
+        const pageNum = i + 1 + coverOffset + indexOffset
         pageHtmls.push(`
-          <div class="page">
+          <div class="page" ${anchorAttrs}>
             <header class="page-header">
               <div class="brand"><img class="logo" src="/logo-cf.svg" alt="Casa Freitas" /><span class="sep"></span><span class="sub">Encarte de Ofertas B2B</span></div>
               <div class="pg">Pg. ${pageNum} / ${totalPages}</div>
