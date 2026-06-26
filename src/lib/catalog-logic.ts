@@ -28,11 +28,10 @@ export function autoSortProducts(products: Product[]): Product[] {
     // 2. Família detectada por palavras-chave
     const familyCompare = detectFamily(a).localeCompare(detectFamily(b), 'pt-BR')
     if (familyCompare !== 0) return familyCompare
-    // 3. Nome alfabético
-    const nameCompare = a.name.localeCompare(b.name, 'pt-BR')
-    if (nameCompare !== 0) return nameCompare
-    // 4. Preço crescente
-    return a.price - b.price
+    // 3. Preço crescente (do mais barato ao mais caro)
+    if (a.price !== b.price) return a.price - b.price
+    // 4. Nome alfabético como desempate
+    return a.name.localeCompare(b.name, 'pt-BR')
   })
 }
 
