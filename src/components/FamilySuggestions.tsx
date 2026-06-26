@@ -1,7 +1,7 @@
 'use client'
 import { useMemo, useState } from 'react'
 import { useCatalogStore } from '@/store/catalog'
-import { suggestFamilyGroups } from '@/lib/catalog-logic'
+import { suggestFamilyGroups, formatType } from '@/lib/catalog-logic'
 
 export default function FamilySuggestions() {
   const { products } = useCatalogStore()
@@ -34,7 +34,7 @@ export default function FamilySuggestions() {
         <div className="mt-3 space-y-2">
           {families.map(([family, prods]) => (
             <div key={family} className="bg-white rounded-lg p-3 border border-amber-100">
-              <p className="text-xs font-semibold text-amber-900">{family}</p>
+              <p className="text-xs font-semibold text-amber-900">{formatType(family)}</p>
               <p className="text-xs text-amber-600 mt-0.5">
                 {prods.length} produtos ·{' '}
                 {prods

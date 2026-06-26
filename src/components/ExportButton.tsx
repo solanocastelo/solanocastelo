@@ -2,6 +2,7 @@
 import { useState } from 'react'
 import { useCatalogStore } from '@/store/catalog'
 import { driveImageUrl } from '@/lib/imageUrl'
+import { formatType } from '@/lib/catalog-logic'
 
 function formatDate(d: string): string {
   if (!d) return ''
@@ -279,7 +280,7 @@ export default function ExportButton() {
       // Index page
       const indexRows = typeEntries.map(([tipo, pgNum]) => `
         <a href="#tipo-${encodeURIComponent(tipo)}" class="idx-row">
-          <span class="idx-name">${escapeHtml(tipo)}</span>
+          <span class="idx-name">${escapeHtml(formatType(tipo))}</span>
           <span class="idx-dots"></span>
           <span class="idx-pg">Pg. ${pgNum}</span>
         </a>`).join('')
