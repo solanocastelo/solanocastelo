@@ -94,14 +94,48 @@ export function detectFamily(product: Product): string {
   return product.type || 'Outros'
 }
 
+// Palavras que indicam um agrupamento ("jogo de X", "kit de X", "conjunto de X").
+// Itens com estas palavras pertencem à mesma ESTAÇÃO do item individual,
+// mas formam um sub-grupo separado que vem depois dos individuais.
+const SET_KEYWORDS = ['jogo', 'kit', 'conjunto', 'jg']
+
+// A "estação" é a macro-categoria que mantém itens relacionados juntos.
+// Ex: "Bolas" e "Jogo de Bolas" → ambos na estação "bola".
+// Derivada do tipo+nome, removendo as palavras de agrupamento.
+export function getStation(product: Product): string {
+  const base = `${product.type || ''} ${product.name || ''}`
+    .toLowerCase()
+    .replace(/[_\-]+/g, ' ')
+    .replace(/\b(jogo|jg|kit|conjunto)\b\s*(de\s*)?/g, '') // remove "jogo de", "kit de"...
+    .replace(/\s+/g, ' ')
+    .trim()
+  // usa a família detectada como chave de estação (agrupa por palavra-chave)
+  const family = detectFamily(product)
+  // se o tipo da planilha existir, prioriza-o como estação (sem o termo de conjunto)
+  const typeClean = (product.type || '')
+    .toLowerCase()
+    .replace(/[_\-]+/g, ' ')
+    .replace(/\b(jogo|jg|kit|conjunto)\b\s*(de\s*)?/g, '')
+    .replace(/\s+/g, ' ')
+    .trim()
+  return typeClean || family || base || 'outros'
+}
+
+// Sub-grupo dentro da estação: 0 = item individual, 1 = jogo/kit/conjunto.
+// Garante que individuais aparecem antes dos conjuntos na mesma estação.
+function getSetRank(product: Product): number {
+  const text = `${product.type || ''} ${product.name || ''}`.toLowerCase()
+  return SET_KEYWORDS.some(kw => new RegExp(`\\b${kw}\\b`).test(text)) ? 1 : 0
+}
+
 export function autoSortProducts(products: Product[]): Product[] {
   return [...products].sort((a, b) => {
-    // 1. Tipo/Grupo da planilha
-    const typeCompare = (a.type || '').localeCompare(b.type || '', 'pt-BR')
-    if (typeCompare !== 0) return typeCompare
-    // 2. Família detectada por palavras-chave
-    const familyCompare = detectFamily(a).localeCompare(detectFamily(b), 'pt-BR')
-    if (familyCompare !== 0) return familyCompare
+    // 1. Estação — mantém itens relacionados juntos (bolas + jogos de bola)
+    const stationCompare = getStation(a).localeCompare(getStation(b), 'pt-BR')
+    if (stationCompare !== 0) return stationCompare
+    // 2. Sub-grupo — individuais antes de jogos/kits/conjuntos
+    const setCompare = getSetRank(a) - getSetRank(b)
+    if (setCompare !== 0) return setCompare
     // 3. Preço crescente (do mais barato ao mais caro)
     if (a.price !== b.price) return a.price - b.price
     // 4. Nome alfabético como desempate
