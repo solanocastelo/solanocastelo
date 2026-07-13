@@ -1,12 +1,12 @@
 'use client'
 import { useCatalogStore } from '@/store/catalog'
-import { formatType } from '@/lib/catalog-logic'
+import { sectionLabel } from '@/lib/catalog-logic'
 
 export default function FilterBar() {
   const {
     products, filterNoImage, filterCategory, filterType,
     toggleFilterNoImage, setFilterCategory, setFilterType,
-    setSortMode, sortMode, rebuildPages,
+    setSortMode, sortMode, rebuildPages, typeLabels,
   } = useCatalogStore()
 
   const types = Array.from(new Set(products.map(p => p.type).filter(Boolean))).sort()
@@ -27,7 +27,7 @@ export default function FilterBar() {
             className="text-xs border border-gray-200 rounded-lg px-2 py-1.5 bg-white text-gray-700 focus:outline-none focus:border-[#312783]"
           >
             <option value="">Todos os Tipos</option>
-            {types.map(t => <option key={t} value={t}>{formatType(t)}</option>)}
+            {types.map(t => <option key={t} value={t}>{sectionLabel(t, typeLabels)}</option>)}
           </select>
         )}
 

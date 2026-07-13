@@ -55,6 +55,17 @@ const TYPE_ALIASES: Record<string, string> = {
   'geral': 'Geral',
 }
 
+// Rótulo de secção de um produto: aplica override do utilizador se existir,
+// senão usa o formatType automático. A chave do override é o formatType (rótulo
+// automático), para que renomear afete todos os tipos brutos que colapsam nele.
+export function sectionLabel(
+  type: string | undefined | null,
+  overrides: Record<string, string> = {}
+): string {
+  const auto = formatType(type)
+  return overrides[auto] || auto
+}
+
 // Transforma qualquer valor de tipo/grupo da planilha num label legível
 export function formatType(raw: string | undefined | null): string {
   if (!raw) return 'Outros'

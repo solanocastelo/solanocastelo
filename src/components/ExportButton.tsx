@@ -2,7 +2,7 @@
 import { useState } from 'react'
 import { useCatalogStore } from '@/store/catalog'
 import { driveImageUrl } from '@/lib/imageUrl'
-import { formatType } from '@/lib/catalog-logic'
+import { sectionLabel } from '@/lib/catalog-logic'
 
 function formatDate(d: string): string {
   if (!d) return ''
@@ -200,7 +200,7 @@ const DOC_CSS = `
 export default function ExportButton() {
   const [loading, setLoading] = useState(false)
   const [progress, setProgress] = useState(0)
-  const { campaign, pages } = useCatalogStore()
+  const { campaign, pages, typeLabels } = useCatalogStore()
   const showOriginalPrice = campaign.showOriginalPrice ?? true
   const showDiscount = campaign.showDiscount ?? true
 
@@ -267,22 +267,22 @@ export default function ExportButton() {
         })
       )
 
-      // Build index: first page number per tipo
+      // Build index: first page number per rótulo de secção (já deduplicado)
       const coverOffset = campaign.coverImageBase64 ? 1 : 0
       const indexOffset = 1 // the index page itself
-      const typePageMap = new Map<string, number>() // tipo → page number (1-based, after cover+index)
+      const typePageMap = new Map<string, number>() // label → page number (1-based, after cover+index)
       for (let i = 0; i < pages.length; i++) {
         for (const p of pages[i].products) {
-          const t = p.type || 'Outros'
-          if (!typePageMap.has(t)) typePageMap.set(t, i + 1 + coverOffset + indexOffset)
+          const label = sectionLabel(p.type, typeLabels)
+          if (!typePageMap.has(label)) typePageMap.set(label, i + 1 + coverOffset + indexOffset)
         }
       }
       const typeEntries = Array.from(typePageMap.entries())
 
       // Index page
-      const indexRows = typeEntries.map(([tipo, pgNum]) => `
-        <a href="#tipo-${encodeURIComponent(tipo)}" class="idx-row">
-          <span class="idx-name">${escapeHtml(formatType(tipo))}</span>
+      const indexRows = typeEntries.map(([label, pgNum]) => `
+        <a href="#tipo-${encodeURIComponent(label)}" class="idx-row">
+          <span class="idx-name">${escapeHtml(label)}</span>
           <span class="idx-dots"></span>
           <span class="idx-pg">Pg. ${pgNum}</span>
         </a>`).join('')
@@ -343,11 +343,11 @@ export default function ExportButton() {
             </div>`
         }).join('')
 
-        // Anchor id for the first page of each tipo
-        const tiposOnPage = Array.from(new Set(pages[i].products.map(p => p.type || 'Outros')))
-        const newTipos = tiposOnPage.filter(t => !seenTypes.has(t))
-        newTipos.forEach(t => seenTypes.add(t))
-        const anchorAttrs = newTipos.map(t => `id="tipo-${encodeURIComponent(t)}"`).join(' ')
+        // Anchor id for the first page of each rótulo de secção
+        const labelsOnPage = Array.from(new Set(pages[i].products.map(p => sectionLabel(p.type, typeLabels))))
+        const newLabels = labelsOnPage.filter(t => !seenTypes.has(t))
+        newLabels.forEach(t => seenTypes.add(t))
+        const anchorAttrs = newLabels.map(t => `id="tipo-${encodeURIComponent(t)}"`).join(' ')
 
         const pageNum = i + 1 + coverOffset + indexOffset
         pageHtmls.push(`

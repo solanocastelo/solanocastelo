@@ -9,6 +9,7 @@ import CoverUpload from '@/components/CoverUpload'
 import ExportButton from '@/components/ExportButton'
 import FamilySuggestions from '@/components/FamilySuggestions'
 import MissingImages from '@/components/MissingImages'
+import TypeLabelsEditor from '@/components/TypeLabelsEditor'
 import { Product } from '@/types/catalog'
 import { driveImageUrl } from '@/lib/imageUrl'
 
@@ -194,6 +195,8 @@ export default function Home() {
           </div>
 
           <MissingImages />
+
+          <TypeLabelsEditor />
 
           <div className="bg-white rounded-xl border border-gray-200 p-5">
             <h3 className="font-semibold text-[#312783] text-sm uppercase tracking-wider mb-3 flex items-center gap-2">

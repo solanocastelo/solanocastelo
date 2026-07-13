@@ -57,4 +57,5 @@ export interface CatalogState {
   filterCategory: string
   filterType: string
   sortMode: 'auto' | 'manual' | 'original'
+  typeLabels: Record<string, string>  // rótulo final → nome personalizado
 }
