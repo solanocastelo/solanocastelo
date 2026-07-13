@@ -22,7 +22,9 @@ function splitPrice(formatted: string) {
 
 export default function ProductCard({ product, compact = false }: Props) {
   const [showImageManager, setShowImageManager] = useState(false)
-  const { toggleProductHidden } = useCatalogStore()
+  const { toggleProductHidden, campaign } = useCatalogStore()
+  const showOriginalPrice = campaign.showOriginalPrice ?? true
+  const showDiscount = campaign.showDiscount ?? true
 
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } =
     useSortable({ id: product.id })
@@ -47,7 +49,8 @@ export default function ProductCard({ product, compact = false }: Props) {
   }, [rawImageUrl])
 
   const { main: priceMain, cents: priceCents } = splitPrice(product.priceFormatted)
-  const hasDiscount = product.discountPercent > 0
+  const hasDiscount = product.discountPercent > 0 && showDiscount
+  const showWas = product.discountPercent > 0 && showOriginalPrice
 
   if (compact) {
     return (
@@ -87,7 +90,7 @@ export default function ProductCard({ product, compact = false }: Props) {
             {product.name}
           </p>
           <div className="flex flex-col gap-0.5">
-            {hasDiscount && (
+            {showWas && (
               <span className="text-[6px] text-[#9a9a9a] line-through leading-none">
                 {product.priceOriginalFormatted}
               </span>
@@ -144,7 +147,7 @@ export default function ProductCard({ product, compact = false }: Props) {
           {product.type ? ` · ${product.type}` : ''}
         </p>
         <div className="flex items-center gap-2 mt-1">
-          {hasDiscount && (
+          {showWas && (
             <span className="text-[10px] text-gray-400 line-through">{product.priceOriginalFormatted}</span>
           )}
           <span className="text-sm font-black text-gray-900">{product.priceFormatted}</span>

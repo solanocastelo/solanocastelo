@@ -201,6 +201,8 @@ export default function ExportButton() {
   const [loading, setLoading] = useState(false)
   const [progress, setProgress] = useState(0)
   const { campaign, pages } = useCatalogStore()
+  const showOriginalPrice = campaign.showOriginalPrice ?? true
+  const showDiscount = campaign.showDiscount ?? true
 
   const handleExport = async () => {
     if (pages.length === 0) return
@@ -327,12 +329,12 @@ export default function ExportButton() {
             <div class="card">
               <div class="photo">
                 <div class="frame">${imgHtml}</div>
-                ${p.discountPercent > 0 ? `<div class="badge">${p.discountPercent}% OFF</div>` : ''}
+                ${p.discountPercent > 0 && showDiscount ? `<div class="badge">${p.discountPercent}% OFF</div>` : ''}
               </div>
               <div class="info">
                 <div class="name">${escapeHtml(p.name)}</div>
                 <div class="price">
-                  ${p.discountPercent > 0 ? `<span class="was">${escapeHtml(p.priceOriginalFormatted)}</span>` : ''}
+                  ${p.discountPercent > 0 && showOriginalPrice ? `<span class="was">${escapeHtml(p.priceOriginalFormatted)}</span>` : ''}
                   <div class="now"><span class="cur">R$</span><span class="int">${int}</span><span class="dec">,${dec}</span></div>
                 </div>
                 ${pill}

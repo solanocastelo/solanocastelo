@@ -27,6 +27,8 @@ const defaultCampaign: CampaignConfig = {
   validityTo: '',
   plaza: 'Ceará',
   commercialEmail: 'comercial@casafreitas.com.br',
+  showOriginalPrice: true,
+  showDiscount: true,
 }
 
 export const useCatalogStore = create<CatalogStore>((set, get) => ({

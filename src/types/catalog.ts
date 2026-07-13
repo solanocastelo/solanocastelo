@@ -37,6 +37,8 @@ export interface CampaignConfig {
   plaza: string
   commercialEmail: string
   coverImageBase64?: string
+  showOriginalPrice: boolean  // exibe "preço de" riscado
+  showDiscount: boolean       // exibe selo "% OFF"
 }
 
 export interface CatalogPage {

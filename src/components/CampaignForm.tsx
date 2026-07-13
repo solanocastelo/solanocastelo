@@ -75,6 +75,51 @@ export default function CampaignForm() {
         placeholder="comercial@casafreitas.com.br"
         type="email"
       />
+
+      <div className="border-t border-gray-100 pt-4 space-y-3">
+        <label className="text-xs font-semibold text-gray-500 uppercase tracking-wide">
+          Exibição de Preços
+        </label>
+        <Toggle
+          label='Mostrar "preço de" (riscado)'
+          checked={campaign.showOriginalPrice ?? true}
+          onChange={v => setCampaign({ showOriginalPrice: v })}
+        />
+        <Toggle
+          label='Mostrar selo "% OFF"'
+          checked={campaign.showDiscount ?? true}
+          onChange={v => setCampaign({ showDiscount: v })}
+        />
+      </div>
     </div>
+  )
+}
+
+interface ToggleProps {
+  label: string
+  checked: boolean
+  onChange: (v: boolean) => void
+}
+
+function Toggle({ label, checked, onChange }: ToggleProps) {
+  return (
+    <button
+      type="button"
+      onClick={() => onChange(!checked)}
+      className="w-full flex items-center justify-between gap-3 group"
+    >
+      <span className="text-sm text-gray-700 text-left">{label}</span>
+      <span
+        className={`relative inline-flex h-6 w-11 flex-shrink-0 rounded-full transition-colors ${
+          checked ? 'bg-[#312783]' : 'bg-gray-300'
+        }`}
+      >
+        <span
+          className={`inline-block h-5 w-5 mt-0.5 rounded-full bg-white shadow transform transition-transform ${
+            checked ? 'translate-x-[22px]' : 'translate-x-0.5'
+          }`}
+        />
+      </span>
+    </button>
   )
 }
