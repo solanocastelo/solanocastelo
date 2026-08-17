@@ -58,4 +58,6 @@ export interface CatalogState {
   filterType: string
   sortMode: 'auto' | 'manual' | 'original'
   typeLabels: Record<string, string>  // rótulo final → nome personalizado
+  activeTab: string                    // aba da planilha selecionada
+  tabs: string[]                       // abas disponíveis na planilha
 }

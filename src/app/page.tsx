@@ -14,15 +14,36 @@ import { Product } from '@/types/catalog'
 import { driveImageUrl } from '@/lib/imageUrl'
 
 export default function Home() {
-  const { setProducts, setError, error, products, pages } =
+  const { setProducts, setError, error, products, pages, activeTab, tabs, setActiveTab, setTabs } =
     useCatalogStore()
   const [loading, setLoading] = useState<'sheets' | 'drive' | false>(false)
+
+  const sheetsUrl = () => {
+    const tab = useCatalogStore.getState().activeTab
+    return tab ? `/api/sheets?tab=${encodeURIComponent(tab)}` : '/api/sheets'
+  }
+
+  const loadTabs = async () => {
+    try {
+      const res = await fetch('/api/sheets/tabs', { cache: 'no-store' })
+      const data = await res.json()
+      if (Array.isArray(data.tabs)) {
+        setTabs(data.tabs)
+        // se ainda não há aba selecionada, usa a primeira
+        if (!useCatalogStore.getState().activeTab && data.tabs[0]) {
+          setActiveTab(data.tabs[0])
+        }
+      }
+    } catch {
+      // silencioso — o dropdown simplesmente não aparece
+    }
+  }
 
   const loadAll = async () => {
     setLoading('sheets')
     try {
       const [sheetsRes, driveRes] = await Promise.all([
-        fetch('/api/sheets', { cache: 'no-store' }),
+        fetch(sheetsUrl(), { cache: 'no-store' }),
         fetch('/api/drive/list', { cache: 'no-store' }),
       ])
       const sheetsData = await sheetsRes.json()
@@ -45,7 +66,7 @@ export default function Home() {
   const loadSheets = async () => {
     setLoading('sheets')
     try {
-      const res = await fetch('/api/sheets', { cache: 'no-store' })
+      const res = await fetch(sheetsUrl(), { cache: 'no-store' })
       const sheetsData = await res.json()
       if (sheetsData.error) throw new Error(sheetsData.error)
       // Preserve existing image data
@@ -86,8 +107,35 @@ export default function Home() {
     }
   }
 
+  const handleTabChange = async (tab: string) => {
+    setActiveTab(tab)
+    // recarrega dados da nova aba (mantém imagens já associadas por código)
+    setLoading('sheets')
+    try {
+      const res = await fetch(`/api/sheets?tab=${encodeURIComponent(tab)}`, { cache: 'no-store' })
+      const sheetsData = await res.json()
+      if (sheetsData.error) throw new Error(sheetsData.error)
+      const driveRes = await fetch('/api/drive/list', { cache: 'no-store' })
+      const driveData = await driveRes.json()
+      const imageMap: Record<string, string[]> = driveData.imageMap || {}
+      const enriched: Product[] = (sheetsData.products || []).map((p: Product) => {
+        const fileIds = imageMap[p.code] || []
+        const fileId = fileIds[0]
+        return { ...p, imageFileIds: fileIds, imageFileId: fileId, imageUrl: fileId ? driveImageUrl(fileId) : undefined, hasImage: fileIds.length > 0 }
+      })
+      setProducts(enriched)
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Erro ao carregar aba')
+    } finally {
+      setLoading(false)
+    }
+  }
+
   useEffect(() => {
-    loadAll()
+    (async () => {
+      await loadTabs()
+      await loadAll()
+    })()
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
@@ -107,6 +155,19 @@ export default function Home() {
           </div>
 
           <div className="flex items-center gap-3">
+            {tabs.length > 0 && (
+              <label className="flex items-center gap-2">
+                <span className="text-white/50 text-xs uppercase tracking-wide">Aba</span>
+                <select
+                  value={activeTab}
+                  onChange={e => handleTabChange(e.target.value)}
+                  disabled={!!loading}
+                  className="bg-white/10 hover:bg-white/20 text-white text-sm rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-white/30 disabled:opacity-50 cursor-pointer [&>option]:text-gray-800"
+                >
+                  {tabs.map(t => <option key={t} value={t}>{t}</option>)}
+                </select>
+              </label>
+            )}
             {products.length > 0 && (
               <span className="text-white/40 text-xs">
                 {products.length} produtos · {pages.length} página(s)

@@ -13,6 +13,8 @@ interface CatalogStore extends CatalogState {
   setFilterType: (type: string) => void
   setSortMode: (mode: 'auto' | 'manual' | 'original') => void
   setTypeLabel: (key: string, label: string) => void
+  setActiveTab: (tab: string) => void
+  setTabs: (tabs: string[]) => void
   reorderPages: (pages: CatalogPage[]) => void
   moveProduct: (productId: string, targetPageIndex: number, targetPosition: number) => void
   setSelectedProduct: (id: string | null) => void
@@ -44,6 +46,8 @@ export const useCatalogStore = create<CatalogStore>((set, get) => ({
   filterType: '',
   sortMode: 'auto',
   typeLabels: {},
+  activeTab: '',
+  tabs: [],
 
   setProducts: (products) => {
     set({ products })
@@ -79,6 +83,9 @@ export const useCatalogStore = create<CatalogStore>((set, get) => ({
       else delete next[key]
       return { typeLabels: next }
     }),
+
+  setActiveTab: (tab) => set({ activeTab: tab }),
+  setTabs: (tabs) => set({ tabs }),
 
   reorderPages: (pages) => set({ pages }),
 

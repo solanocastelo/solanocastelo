@@ -10,7 +10,7 @@ function parsePrice(val: string): number {
   return parseFloat((val || '0').toString().replace(/[^\d,.]/g, '').replace(',', '.')) || 0
 }
 
-export async function GET() {
+export async function GET(request: Request) {
   try {
     const spreadsheetId = process.env.GOOGLE_SHEETS_ID
     if (!spreadsheetId) {
@@ -21,9 +21,14 @@ export async function GET() {
     }
     const sheets = await getSheetsClient()
 
+    // Aba selecionada via ?tab= — se ausente, usa a primeira aba da planilha
+    const tab = new URL(request.url).searchParams.get('tab')?.trim()
+    // Escapa aspas simples no nome da aba para o formato de range A1
+    const range = tab ? `'${tab.replace(/'/g, "''")}'!A:Z` : 'A:Z'
+
     const response = await sheets.spreadsheets.values.get({
       spreadsheetId,
-      range: 'A:Z',
+      range,
     })
 
     const rows = response.data.values
