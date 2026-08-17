@@ -147,7 +147,8 @@ export function autoSortProducts(products: Product[]): Product[] {
     // 2. Sub-grupo — individuais antes de jogos/kits/conjuntos
     const setCompare = getSetRank(a) - getSetRank(b)
     if (setCompare !== 0) return setCompare
-    // 3. Preço crescente (do mais barato ao mais caro)
+    // 3. Preço de venda (atacado) crescente — do menor valor ao maior.
+    //    NÃO usa percentual de desconto, apenas o valor final em R$.
     if (a.price !== b.price) return a.price - b.price
     // 4. Nome alfabético como desempate
     return a.name.localeCompare(b.name, 'pt-BR')

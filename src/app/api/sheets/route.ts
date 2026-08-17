@@ -7,7 +7,18 @@ export const dynamic = 'force-dynamic'
 export const revalidate = 0
 
 function parsePrice(val: string): number {
-  return parseFloat((val || '0').toString().replace(/[^\d,.]/g, '').replace(',', '.')) || 0
+  // Remove tudo exceto dígitos, ponto e vírgula (tira "R$", espaços, etc.)
+  let s = (val || '0').toString().trim().replace(/[^\d.,]/g, '')
+  if (!s) return 0
+  if (s.includes('.') && s.includes(',')) {
+    // Formato pt-BR "1.234,56" → ponto = milhar, vírgula = decimal
+    s = s.replace(/\./g, '').replace(',', '.')
+  } else if (s.includes(',')) {
+    // Só vírgula "34,99" → decimal
+    s = s.replace(',', '.')
+  }
+  // Só ponto ou sem separador: já está no formato correto
+  return parseFloat(s) || 0
 }
 
 export async function GET(request: Request) {
