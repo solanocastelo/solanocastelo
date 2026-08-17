@@ -38,7 +38,12 @@ export async function GET(request: Request) {
 
     const headers = rows[0].map((h: string) => h.toString().toLowerCase().trim())
 
+    // Procura primeiro por correspondência exata do cabeçalho, depois parcial
     const col = (names: string[]) => {
+      for (const name of names) {
+        const exact = headers.findIndex((h: string) => h === name)
+        if (exact !== -1) return exact
+      }
       for (const name of names) {
         const idx = headers.findIndex((h: string) => h.includes(name))
         if (idx !== -1) return idx
@@ -48,7 +53,10 @@ export async function GET(request: Request) {
 
     // Mapeamento das colunas do Sheet Casa Freitas:
     // Código | Referência | Produto | Tipo | Caixa Master | Preço Tabela | Preço Atacado
-    const codeIdx      = col(['código', 'codigo'])
+    // Algumas abas usam apenas "C" no cabeçalho do código; se nada casar,
+    // assume a coluna A (índice 0) como código.
+    let codeIdx        = col(['código', 'codigo', 'c'])
+    if (codeIdx === -1) codeIdx = 0
     const refIdx       = col(['referência', 'referencia', 'ref'])
     const nameIdx      = col(['produto', 'nome', 'descrição', 'descricao', 'name'])
     const typeIdx      = col(['tipo', 'type', 'grupo'])
